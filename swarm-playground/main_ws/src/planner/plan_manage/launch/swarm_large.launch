@@ -33,10 +33,10 @@
         <arg name="drone_id" value="0"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-10.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-10.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -46,10 +46,10 @@
         <arg name="drone_id" value="1"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-9.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-9.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -59,10 +59,10 @@
         <arg name="drone_id" value="2"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-8.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-8.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -72,10 +72,10 @@
         <arg name="drone_id" value="3"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-7.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-7.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -85,10 +85,10 @@
         <arg name="drone_id" value="4"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-6.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-6.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -98,10 +98,10 @@
         <arg name="drone_id" value="5"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-5.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-5.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -111,10 +111,10 @@
         <arg name="drone_id" value="6"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-4.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-4.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -124,10 +124,10 @@
         <arg name="drone_id" value="7"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-3.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-3.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -137,10 +137,10 @@
         <arg name="drone_id" value="8"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-2.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-2.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -150,10 +150,10 @@
         <arg name="drone_id" value="9"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="-1.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="-1.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -163,10 +163,10 @@
         <arg name="drone_id" value="10"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="0.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="0.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -176,10 +176,10 @@
         <arg name="drone_id" value="11"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="1.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="1.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -189,10 +189,10 @@
         <arg name="drone_id" value="12"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="2.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="2.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -202,10 +202,10 @@
         <arg name="drone_id" value="13"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="3.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="3.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -215,10 +215,10 @@
         <arg name="drone_id" value="14"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="4.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="4.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -228,10 +228,10 @@
         <arg name="drone_id" value="15"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="5.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="5.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -241,10 +241,10 @@
         <arg name="drone_id" value="16"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="6.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="6.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -254,10 +254,10 @@
         <arg name="drone_id" value="17"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="7.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="7.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -267,10 +267,10 @@
         <arg name="drone_id" value="18"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="8.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="8.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -280,10 +280,10 @@
         <arg name="drone_id" value="19"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="9.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="9.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -293,10 +293,10 @@
         <arg name="drone_id" value="20"/>
         <arg name="init_x" value="-35.0"/>
         <arg name="init_y" value="10.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="35.0"/>
         <arg name="target0_y" value="10.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -306,10 +306,10 @@
         <arg name="drone_id" value="21"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-10.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-10.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -319,10 +319,10 @@
         <arg name="drone_id" value="22"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-9.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-9.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -332,10 +332,10 @@
         <arg name="drone_id" value="23"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-8.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-8.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -345,10 +345,10 @@
         <arg name="drone_id" value="24"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-7.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-7.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -358,10 +358,10 @@
         <arg name="drone_id" value="25"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-6.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-6.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -371,10 +371,10 @@
         <arg name="drone_id" value="26"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-5.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-5.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -384,10 +384,10 @@
         <arg name="drone_id" value="27"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-4.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-4.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -397,10 +397,10 @@
         <arg name="drone_id" value="28"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-3.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-3.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -410,10 +410,10 @@
         <arg name="drone_id" value="29"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-2.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-2.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -423,10 +423,10 @@
         <arg name="drone_id" value="30"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="-1.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="-1.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -436,10 +436,10 @@
         <arg name="drone_id" value="31"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="0.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="0.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -449,10 +449,10 @@
         <arg name="drone_id" value="32"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="1.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="1.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -462,10 +462,10 @@
         <arg name="drone_id" value="33"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="2.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="2.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -475,10 +475,10 @@
         <arg name="drone_id" value="34"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="3.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="3.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -488,10 +488,10 @@
         <arg name="drone_id" value="35"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="4.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="4.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -501,10 +501,10 @@
         <arg name="drone_id" value="36"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="5.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="5.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -514,10 +514,10 @@
         <arg name="drone_id" value="37"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="6.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="6.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -527,10 +527,10 @@
         <arg name="drone_id" value="38"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="7.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="7.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -540,10 +540,10 @@
         <arg name="drone_id" value="39"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="8.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="8.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -553,10 +553,10 @@
         <arg name="drone_id" value="40"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="9.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="9.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
@@ -566,10 +566,10 @@
         <arg name="drone_id" value="41"/>
         <arg name="init_x" value="35.0"/>
         <arg name="init_y" value="10.0"/>
-        <arg name="init_z" value="0.1"/>
+        <arg name="init_z" value="0"/>
         <arg name="target0_x" value="-35.0"/>
         <arg name="target0_y" value="10.0"/>
-        <arg name="target0_z" value="1"/>
+        <arg name="target0_z" value="0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>

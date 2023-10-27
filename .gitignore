@@ -4,3 +4,6 @@ build/
 devel/
 logs/
 .catkin_tools
+.idea
+cmake-build*
+swarm-playground/*_ws/src/CMakeLists.txt
