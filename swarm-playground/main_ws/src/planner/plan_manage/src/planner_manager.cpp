@@ -230,10 +230,10 @@ namespace ego_planner
         innerPs = (start_pt + local_target_pt) / 2 +
                   (((double)rand()) / RAND_MAX - 0.5) *
                       (start_pt - local_target_pt).norm() *
-                      horizen_dir * 0.8 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989) +
-                  (((double)rand()) / RAND_MAX - 0.5) *
-                      (start_pt - local_target_pt).norm() *
-                      vertical_dir * 0.4 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989);
+                      horizen_dir * 0.8 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989); // +
+//                  (((double)rand()) / RAND_MAX - 0.5) *
+//                      (start_pt - local_target_pt).norm() *
+//                      vertical_dir * 0.4 * (-0.978 / (continous_failures_count_ + 0.989) + 0.989);
 
         piece_nums = 2;
         piece_dur_vec.resize(2);

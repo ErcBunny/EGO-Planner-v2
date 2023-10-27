@@ -202,7 +202,7 @@ ASTAR_RET AStar::AstarSearch(const double step_size, Vector3d start_pt, Vector3d
 
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++)
-                for (int dz = -1; dz <= 1; dz++)
+                for (int dz = 0; dz <= 0; dz++)
                 {
                     if (dx == 0 && dy == 0 && dz == 0)
                         continue;
