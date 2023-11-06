@@ -28,6 +28,7 @@ Eigen::Vector3d last_pos_;
 // yaw control
 double last_yaw_, last_yawdot_, slowly_flip_yaw_target_, slowly_turn_to_center_target_;
 double time_forward_;
+double max_yaw_dot_, max_yaw_dd_;
 
 void heartbeatCallback(std_msgs::EmptyPtr msg)
 {
@@ -133,7 +134,7 @@ std::pair<double, double> calculate_yaw(double t_cur, Eigen::Vector3d &pos, doub
   return yaw_yawdot;
 }
 
-void publish_cmd(Vector3d p, Vector3d v, Vector3d a, Vector3d j, double y, double yd)
+void publish_cmd(Vector3d p, Vector3d v, Vector3d a, Vector3d j, double y, double yd, double ydd)
 {
 
   cmd.header.stamp = ros::Time::now();
@@ -147,6 +148,7 @@ void publish_cmd(Vector3d p, Vector3d v, Vector3d a, Vector3d j, double y, doubl
   cmd.velocity.x = v(0);
   cmd.velocity.y = v(1);
   cmd.velocity.z = v(2);
+  cmd.velnorm = v.norm();
   cmd.acceleration.x = a(0);
   cmd.acceleration.y = a(1);
   cmd.acceleration.z = a(2);
@@ -155,6 +157,18 @@ void publish_cmd(Vector3d p, Vector3d v, Vector3d a, Vector3d j, double y, doubl
   cmd.jerk.z = j(2);
   cmd.yaw = y;
   cmd.yaw_dot = yd;
+  cmd.yaw_dd = ydd;
+
+  // limit the values for better rqt visualization
+  if (cmd.yaw_dot > max_yaw_dot_)
+    cmd.yaw_dot = max_yaw_dot_;
+  if (cmd.yaw_dot < -max_yaw_dot_)
+    cmd.yaw_dot = -max_yaw_dot_;
+  if (cmd.yaw_dd > max_yaw_dd_)
+    cmd.yaw_dd = max_yaw_dd_;
+  if (cmd.yaw_dd < -max_yaw_dd_)
+    cmd.yaw_dd = -max_yaw_dd_;
+
   pos_cmd_pub.publish(cmd);
 
   last_pos_ = p;
@@ -178,7 +192,7 @@ void cmdCallback(const ros::TimerEvent &e)
     ROS_ERROR("[traj_server] Lost heartbeat from the planner, is it dead?");
 
     receive_traj_ = false;
-    publish_cmd(last_pos_, Vector3d::Zero(), Vector3d::Zero(), Vector3d::Zero(), last_yaw_, 0);
+    publish_cmd(last_pos_, Vector3d::Zero(), Vector3d::Zero(), Vector3d::Zero(), last_yaw_, 0, 0);
   }
 
   double t_cur = (time_now - start_time_).toSec();
@@ -198,7 +212,22 @@ void cmdCallback(const ros::TimerEvent &e)
     jer = traj_->getJer(t_cur);
 
     /*** calculate yaw ***/
-    yaw_yawdot = calculate_yaw(t_cur, pos, (time_now - time_last).toSec());
+//    yaw_yawdot = calculate_yaw(t_cur, pos, (time_now - time_last).toSec());
+    double yaw_dd;
+    if (vel(0) == 0 && vel(1) == 0)
+    {
+        yaw_yawdot.first = last_yaw_;
+        yaw_yawdot.second = 0;
+        yaw_dd = 0;
+    }
+    else
+    {
+        yaw_yawdot.first = atan2(vel(1), vel(0));
+        yaw_yawdot.second = (vel(0) * acc(1) - vel(1) * acc(0)) / vel.squaredNorm();
+        auto temp0 = vel(0) * jer(1) - vel(1) * jer(0);
+        auto temp1 = 2 * yaw_yawdot.second  * (vel(0) * acc(1) + vel(1) * acc(0));
+        yaw_dd = (temp0 - temp1) / vel.squaredNorm();
+    }
     /*** calculate yaw ***/
 
     time_last = time_now;
@@ -214,7 +243,7 @@ void cmdCallback(const ros::TimerEvent &e)
     slowly_turn_to_center_target_ = atan2(CENTER[1] - pos(1), CENTER[0] - pos(0));
 
     // publish
-    publish_cmd(pos, vel, acc, jer, yaw_yawdot.first, yaw_yawdot.second);
+    publish_cmd(pos, vel, acc, jer, yaw_yawdot.first, yaw_yawdot.second, yaw_dd);
 #if FLIP_YAW_AT_END or TURN_YAW_TO_CENTER_AT_END
     finished = false;
 #endif
@@ -322,6 +351,9 @@ int main(int argc, char **argv)
   ros::Timer cmd_timer = nh.createTimer(ros::Duration(0.01), cmdCallback);
 
   nh.param("traj_server/time_forward", time_forward_, -1.0);
+  nh.param("traj_server/max_yaw_dot", max_yaw_dot_, -1.0);
+  nh.param("traj_server/max_yaw_dd", max_yaw_dd_, -1.0);
+
   last_yaw_ = 0.0;
   last_yawdot_ = 0.0;
 

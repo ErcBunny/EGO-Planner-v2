@@ -1252,6 +1252,14 @@ namespace ego_planner
     Eigen::Matrix<double, 6, 3> gradViolaPc, gradViolaVc, gradViolaAc, gradViolaJc;
     double gradViolaPt, gradViolaVt, gradViolaAt, gradViolaJt;
     double omg;
+
+    Eigen::Vector3d gradvmin;
+    double omga, alph, ajer;
+    double gradop, gradon, gradalp, gradaln;
+    double costvmin, costop, coston, costalp, costaln;
+    double gradViolaVmint, gradViolaOpt, gradViolaOnt, gradViolaAlpt, gradViolaAlnt;
+    Eigen::Matrix<double, 6, 3> gradViolaVminc, gradViolaOpc, gradViolaOnc, gradViolaAlpc, gradViolaAlnc;
+
     int i_dp = 0;
     costs.setZero();
     // Eigen::MatrixXd constraint_pts(3, N * K + 1);
@@ -1285,6 +1293,38 @@ namespace ego_planner
         acc = c.transpose() * beta2;
         jer = c.transpose() * beta3;
         sna = c.transpose() * beta4;
+        double vel_sqn = vel.squaredNorm();
+        if (vel_sqn < 1e-4)
+        {
+          // if speed < 0.01 m/s do not set constraints on angular v, a, j
+          omga = 0;
+          alph = 0;
+          ajer = 0;
+        }
+        else
+        {
+          // angular velocity https://www.wolframalpha.com/input?i=d%2Fdt+atan2%28y%28t%29%2C+x%28t%29%29
+          omga = (vel(0) * acc(1) - vel(1) * acc(0)) / vel_sqn;
+
+          // angular acceleration https://www.wolframalpha.com/input?i=d%2Fdt+d%2Fdt+atan2%28y%28t%29%2C+x%28t%29%29
+          auto temp0 = vel(0) * jer(1) - vel(1) * jer(0);
+          auto temp1 = 2 * omga * (vel(0) * acc(1) + vel(1) * acc(0));
+          alph = (temp0 - temp1) / vel_sqn;
+
+          // angular jerk https://www.wolframalpha.com/input?i=d%2Fdt+d%2Fdt+d%2Fdt+atan2%28y%28t%29%2C+x%28t%29%29
+          auto temp2 = vel(0) * jer(0) + acc(0) * acc(0) + vel(1) * jer(1) + acc(1) * acc(1);
+          auto temp3 = -2 * omga * temp2 / vel_sqn;
+
+          auto temp4 = -sna(0) * vel(1) - jer(0) * acc(1) + acc(0) * jer(1) + vel(0) * sna(1);
+          auto temp5 = temp4 / vel_sqn;
+
+          auto temp6 = (vel(0) * acc(0) + vel(1) * acc(1)) * (vel(0) * jer(1) - vel(1) * jer(0));
+          auto temp7 = 4 * temp6 / (vel_sqn * vel_sqn);
+
+          auto temp8 = 2 * (vel(1) * acc(0) - vel(0) * acc(1)) * (vel(0) * acc(0) + vel(1) * acc(1));
+
+          ajer = temp3 + temp5 - temp7 + temp8;
+        }
 
         omg = (j == 0 || j == K) ? 0.5 : 1.0;
 
@@ -1341,6 +1381,156 @@ namespace ego_planner
           jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaJc;
           gdT(i) += omg * (costj / K + step * gradViolaJt);
           costs(2) += omg * step * costj;
+        }
+
+        // min vel
+        // if (feasibilityGradCostVmin(vel, gradvmin, costvmin))
+        // {
+        //   gradViolaVminc = beta1 * gradvmin.transpose();
+        //   gradViolaVmint = alpha * gradvmin.transpose() * acc;
+        //   jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaVminc;
+        //   gdT(i) += omg * (costvmin / K + step * gradViolaVmint);
+        //   costs(2) += omg * step * costvmin;
+        // }
+
+        // angular vel < max angular velocity
+        if (feasibilityGradCostOPositive(omga, gradop, costop))
+        {
+          // grad to coeff
+          Eigen::Matrix<double, 6, 3> domga_dc;
+
+          const Eigen::Matrix3d z{{0, -1, 0},
+                                  {1,  0, 0},
+                                  {0,  0, 0}};
+          auto tmp0 = beta2 * beta1.transpose() * c * z.transpose();
+          auto tmp1 = beta1 * beta2.transpose() * c * z.transpose();
+          auto term0 = (tmp0 + tmp1) / vel_sqn;
+
+          auto tmp2 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
+          auto tmp3 = beta2.transpose() * c * z * c.transpose() * beta1;
+          auto tmp4 = beta1 * beta1.transpose() * c;
+          auto term1 = (tmp2 * tmp4 + tmp3 * tmp4) / (vel_sqn * vel_sqn);
+
+          domga_dc = term0 - term1;
+
+          gradViolaOpc = domga_dc * gradop;
+          jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaOpc;
+
+          // grad to t
+          gradViolaOpt = alpha * gradop * alph;
+          gdT(i) += omg * (costj / K + step * gradViolaOpt);
+
+          // add cost
+          costs(2) += omg * step * costop;
+        }
+
+        // angular vel > - max angular velocity
+        if (feasibilityGradCostONegative(omga, gradon, coston))
+        {
+          // grad to coeff
+          Eigen::Matrix<double, 6, 3> domga_dc;
+
+          const Eigen::Matrix3d z{{0, -1, 0},
+                                  {1,  0, 0},
+                                  {0,  0, 0}};
+          auto tmp0 = beta2 * beta1.transpose() * c * z.transpose();
+          auto tmp1 = beta1 * beta2.transpose() * c * z.transpose();
+          auto term0 = (tmp0 + tmp1) / vel_sqn;
+
+          auto tmp2 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
+          auto tmp3 = beta2.transpose() * c * z * c.transpose() * beta1;
+          auto tmp4 = beta1 * beta1.transpose() * c;
+          auto term1 = (tmp2 * tmp4 + tmp3 * tmp4) / (vel_sqn * vel_sqn);
+
+          domga_dc = term0 - term1;
+
+          gradViolaOnc = domga_dc * gradon;
+          jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaOnc;
+
+          // grad to t
+          gradViolaOnt = alpha * gradon * alph;
+          gdT(i) += omg * (costj / K + step * gradViolaOnt);
+
+          // add cost
+          costs(2) += omg * step * coston;
+        }
+
+        // angular acc < max angular acc
+        if (feasibilityGradCostAlPositive(alph, gradalp, costalp))
+        {
+          // grad to coeff
+          Eigen::Matrix<double, 6, 3> dalph_dc;
+
+          const Eigen::Matrix3d z{{0, -1, 0},
+                                  {1,  0, 0},
+                                  {0,  0, 0}};
+
+          double cc12 = beta1.transpose() * c * c.transpose() * beta2;
+          double czc12 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
+          double czc13 = beta1.transpose() * c * z.transpose() * c.transpose() * beta3;
+
+          auto bbc11 = beta1 * beta1.transpose() * c;
+          auto bbc12 = beta1 * beta2.transpose() * c;
+          auto bbc21 = beta2 * beta1.transpose() * c;
+          auto bbcz12 = beta1 * beta2.transpose() * c * z;
+          auto bbcz21 = beta2 * beta1.transpose() * c * z.transpose();
+          auto bbcz13 = beta1 * beta3.transpose() * c * z;
+          auto bbcz31 = beta3 * beta1.transpose() * c * z.transpose();
+
+          auto term0 = (bbcz31 + bbcz13) / vel_sqn;
+          auto term1 = 2 * czc13 * bbc11 / (vel_sqn * vel_sqn);
+          auto term2 = -2 * (cc12 * (bbcz12 + bbcz21) + czc12 * (bbc12 + bbc21)) / (vel_sqn * vel_sqn);
+          auto term3 = -2 * bbc11 * 2 * (czc13 * vel_sqn - 2 * czc12 * cc12) / (vel_sqn * vel_sqn * vel_sqn);
+
+          dalph_dc = term0 + term1 + term2 + term3;
+          gradViolaAlpc = dalph_dc * gradalp;
+          jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaAlpc;
+
+          // grad to t
+          gradViolaAlpt = alpha * gradalp * ajer;
+          gdT(i) += omg * (costj / K + step * gradViolaAlpt);
+
+          // add cost
+          costs(2) += omg * step * costalp;
+        }
+
+        // angular acc > - max angular acc
+        if (feasibilityGradCostAlNegative(alph, gradaln, costaln))
+        {
+          // grad to coeff
+          Eigen::Matrix<double, 6, 3> dalph_dc;
+
+          const Eigen::Matrix3d z{{0, -1, 0},
+                                  {1,  0, 0},
+                                  {0,  0, 0}};
+
+          double cc12 = beta1.transpose() * c * c.transpose() * beta2;
+          double czc12 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
+          double czc13 = beta1.transpose() * c * z.transpose() * c.transpose() * beta3;
+
+          auto bbc11 = beta1 * beta1.transpose() * c;
+          auto bbc12 = beta1 * beta2.transpose() * c;
+          auto bbc21 = beta2 * beta1.transpose() * c;
+          auto bbcz12 = beta1 * beta2.transpose() * c * z;
+          auto bbcz21 = beta2 * beta1.transpose() * c * z.transpose();
+          auto bbcz13 = beta1 * beta3.transpose() * c * z;
+          auto bbcz31 = beta3 * beta1.transpose() * c * z.transpose();
+
+          auto term0 = (bbcz31 + bbcz13) / vel_sqn;
+          auto term1 = 2 * czc13 * bbc11 / (vel_sqn * vel_sqn);
+          auto term2 = -2 * (cc12 * (bbcz12 + bbcz21) + czc12 * (bbc12 + bbc21)) / (vel_sqn * vel_sqn);
+          auto term3 = -2 * bbc11 * 2 * (czc13 * vel_sqn - 2 * czc12 * cc12) / (vel_sqn * vel_sqn * vel_sqn);
+
+          dalph_dc = term0 + term1 + term2 + term3;
+          gradViolaAlnc = dalph_dc * gradaln;
+          jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaAlnc;
+
+          // grad to t
+          gradViolaAlnt = alpha * gradaln * ajer;
+          gdT(i) += omg * (costj / K + step * gradViolaAlnt);
+
+          // add cost
+          costs(2) += omg * step * costaln;
         }
 
         // printf("L\n");
@@ -1554,6 +1744,66 @@ namespace ego_planner
     return false;
   }
 
+//  bool PolyTrajOptimizer::feasibilityGradCostVmin(const Eigen::Vector3d &v, Eigen::Vector3d &gradv, double &costv)
+//  {
+//    double vpen = -v.squaredNorm() + 0.01 * 0.01;
+//    if (vpen > 0)
+//    {
+//      gradv = wei_feas_ * 6 * vpen * vpen * (-v);
+//      costv = wei_feas_ * vpen * vpen * vpen;
+//      return true;
+//    }
+//    return false;
+//  }
+
+  bool PolyTrajOptimizer::feasibilityGradCostOPositive(const double &o, double &grado, double &costo)
+  {
+    double open = o - max_omg_;
+    if (open > 0)
+    {
+      grado = wei_feas_ * 3 * open * open * 1;
+      costo = wei_feas_ * open * open * open;
+      return true;
+    }
+    return false;
+  }
+
+  bool PolyTrajOptimizer::feasibilityGradCostONegative(const double &o, double &grado, double &costo)
+  {
+    double open = -o - max_omg_;
+    if (open > 0)
+    {
+      grado = wei_feas_ * 3 * open * open * (-1);
+      costo = wei_feas_ * open * open * open;
+      return true;
+    }
+    return false;
+  }
+
+  bool PolyTrajOptimizer::feasibilityGradCostAlPositive(const double &al, double &gradal, double &costal)
+  {
+    double alpen = al - max_alpha_;
+    if (alpen > 0)
+    {
+      gradal = wei_feas_ * 3 * alpen * alpen * 1;
+      costal = wei_feas_ * alpen * alpen * alpen;
+      return true;
+    }
+    return false;
+  }
+
+  bool PolyTrajOptimizer::feasibilityGradCostAlNegative(const double &al, double &gradal, double &costal)
+  {
+    double alpen = -al - max_alpha_;
+    if (alpen > 0)
+    {
+      gradal = wei_feas_ * 3 * alpen * alpen * (-1);
+      costal = wei_feas_ * alpen * alpen * alpen;
+      return true;
+    }
+    return false;
+  }
+
   void PolyTrajOptimizer::distanceSqrVarianceWithGradCost2p(const Eigen::MatrixXd &ps,
                                                             Eigen::MatrixXd &gdp,
                                                             double &var)
@@ -1628,6 +1878,8 @@ namespace ego_planner
     nh.param("optimization/max_vel", max_vel_, -1.0);
     nh.param("optimization/max_acc", max_acc_, -1.0);
     nh.param("optimization/max_jer", max_jer_, -1.0);
+    nh.param("optimization/max_omg", max_omg_, -1.0);
+    nh.param("optimization/max_alpha", max_alpha_, -1.0);
   }
 
   void PolyTrajOptimizer::setEnvironment(const GridMap::Ptr &map)

@@ -61,6 +61,7 @@ namespace ego_planner
     if (target_type_ == TARGET_TYPE::MANUAL_TARGET)
     {
       waypoint_sub_ = nh.subscribe("/goal", 1, &EGOReplanFSM::waypointCallback, this);
+      waypoint2d_sub_ = nh.subscribe("/move_base_simple/goal", 1, &EGOReplanFSM::waypointCallback2D, this);
     }
     else if (target_type_ == TARGET_TYPE::PRESET_TARGET)
     {
@@ -539,7 +540,7 @@ namespace ego_planner
         }
         changeFSMExecState(REPLAN_TRAJ, "TRIG");
       }
-
+      
       // visualization_->displayGoalPoint(final_goal_, Eigen::Vector4d(1, 0, 0, 1), 0.3, 0);
       visualization_->displayGlobalPathList(gloabl_traj, 0.1, 0);
     }
@@ -594,6 +595,24 @@ namespace ego_planner
     }
   }
 
+  void EGOReplanFSM::waypointCallback2D(const geometry_msgs::PoseStamped &msg)
+  {
+    // only for giving cmd to drone with id = 0
+    if (planner_manager_->pp_.drone_id != 0)
+        return;
+    tf2::Quaternion q;
+    tf2::fromMsg(msg.pose.orientation, q);
+    double yaw = q.getAngle() * q.getAxis().z();
+
+    ROS_INFO("Received goal: %f, %f, %f, %f", msg.pose.position.x, msg.pose.position.y, msg.pose.position.z, yaw);
+
+    Eigen::Vector3d end_wp(msg.pose.position.x, msg.pose.position.y, msg.pose.position.z);
+    if (planNextWaypoint(end_wp))
+    {
+      have_trigger_ = true;
+    }
+  }
+
   void EGOReplanFSM::readGivenWpsAndPlan()
   {
     if (waypoint_num_ <= 0)
@@ -638,6 +657,10 @@ namespace ego_planner
     odom_vel_(0) = msg->twist.twist.linear.x;
     odom_vel_(1) = msg->twist.twist.linear.y;
     odom_vel_(2) = msg->twist.twist.linear.z;
+
+    tf2::Quaternion q;
+    tf2::fromMsg(msg->pose.pose.orientation, q);
+    odom_yaw_ = q.getAngle() * q.getAxis().z();
 
     have_odom_ = true;
   }

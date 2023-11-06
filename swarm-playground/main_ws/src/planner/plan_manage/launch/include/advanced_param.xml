@@ -13,6 +13,8 @@
     <arg name="max_vel"/>
     <arg name="max_acc"/>
     <arg name="max_jer"/>
+    <arg name="max_omg"/>
+    <arg name="max_alpha"/>
     <arg name="planning_horizon"/>
     <arg name="point_num"/>
     <arg name="point0_x"/>
@@ -82,7 +84,7 @@
         <param name="grid_map/obstacles_inflation" value="0.1" />
         <param name="grid_map/local_map_margin" value="10"/>
         <param name="grid_map/enable_virtual_wall" value="true"/>
-        <param name="grid_map/virtual_ceil" value="3.0"/>
+        <param name="grid_map/virtual_ceil" value="0.1"/>
         <param name="grid_map/virtual_ground" value="-0.1"/>
         <param name="grid_map/ground_height" value="-0.01"/>
         <!-- camera parameter -->
@@ -133,6 +135,8 @@
         <param name="optimization/max_vel" value="$(arg max_vel)" type="double"/>
         <param name="optimization/max_acc" value="$(arg max_acc)" type="double"/>
         <param name="optimization/max_jer" value="$(arg max_jer)" type="double"/>
+        <param name="optimization/max_omg" value="$(arg max_omg)" type="double"/>
+        <param name="optimization/max_alpha" value="$(arg max_alpha)" type="double"/>
         <param name="optimization/record_opt" value="true"/>
     </node>
 </launch>

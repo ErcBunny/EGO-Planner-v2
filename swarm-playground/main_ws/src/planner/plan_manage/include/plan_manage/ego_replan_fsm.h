@@ -21,6 +21,8 @@
 #include <traj_utils/planning_visualization.h>
 #include <traj_utils/PolyTraj.h>
 #include <traj_utils/MINCOTraj.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 using std::vector;
 
@@ -81,12 +83,13 @@ namespace ego_planner
     Eigen::Vector3d final_goal_;                             // goal state
     Eigen::Vector3d local_target_pt_, local_target_vel_; // local target state
     Eigen::Vector3d odom_pos_, odom_vel_, odom_acc_;     // odometry state
+    double odom_yaw_, final_yaw_;
     std::vector<Eigen::Vector3d> wps_;
 
     /* ROS utils */
     ros::NodeHandle node_;
     ros::Timer exec_timer_, safety_timer_;
-    ros::Subscriber waypoint_sub_, odom_sub_, trigger_sub_, broadcast_ploytraj_sub_, mandatory_stop_sub_;
+    ros::Subscriber waypoint_sub_, waypoint2d_sub_, odom_sub_, trigger_sub_, broadcast_ploytraj_sub_, mandatory_stop_sub_;
     ros::Publisher poly_traj_pub_, data_disp_pub_, broadcast_ploytraj_pub_, heartbeat_pub_, ground_height_pub_;
 
     /* state machine functions */
@@ -106,6 +109,7 @@ namespace ego_planner
 
     /* global trajectory */
     void waypointCallback(const quadrotor_msgs::GoalSetPtr &msg);
+    void waypointCallback2D(const geometry_msgs::PoseStamped &msg);
     void readGivenWpsAndPlan();
     bool planNextWaypoint(const Eigen::Vector3d next_wp);
     bool mondifyInCollisionFinalGoal();
