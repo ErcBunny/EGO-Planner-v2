@@ -204,10 +204,6 @@ namespace ego_planner
                               Eigen::Vector3d &gradj,
                               double &costj);
 
-//    bool feasibilityGradCostVmin(const Eigen::Vector3d &v,
-//                                 Eigen::Vector3d &gradv,
-//                                 double &costv);
-
     bool feasibilityGradCostOPositive(const double &o,
                                       double &grado,
                                       double &costo);

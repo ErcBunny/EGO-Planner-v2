@@ -1253,12 +1253,11 @@ namespace ego_planner
     double gradViolaPt, gradViolaVt, gradViolaAt, gradViolaJt;
     double omg;
 
-    Eigen::Vector3d gradvmin;
     double omga, alph, ajer;
     double gradop, gradon, gradalp, gradaln;
-    double costvmin, costop, coston, costalp, costaln;
-    double gradViolaVmint, gradViolaOpt, gradViolaOnt, gradViolaAlpt, gradViolaAlnt;
-    Eigen::Matrix<double, 6, 3> gradViolaVminc, gradViolaOpc, gradViolaOnc, gradViolaAlpc, gradViolaAlnc;
+    double costop, coston, costalp, costaln;
+    double gradViolaOpt, gradViolaOnt, gradViolaAlpt, gradViolaAlnt;
+    Eigen::Matrix<double, 6, 3> gradViolaOpc, gradViolaOnc, gradViolaAlpc, gradViolaAlnc;
 
     int i_dp = 0;
     costs.setZero();
@@ -1294,9 +1293,9 @@ namespace ego_planner
         jer = c.transpose() * beta3;
         sna = c.transpose() * beta4;
         double vel_sqn = vel.squaredNorm();
-        if (vel_sqn < 1e-4)
+        if (vel_sqn == 0)
         {
-          // if speed < 0.01 m/s do not set constraints on angular v, a, j
+          // singularity, set the values to zero
           omga = 0;
           alph = 0;
           ajer = 0;
@@ -1383,18 +1382,8 @@ namespace ego_planner
           costs(2) += omg * step * costj;
         }
 
-        // min vel
-        // if (feasibilityGradCostVmin(vel, gradvmin, costvmin))
-        // {
-        //   gradViolaVminc = beta1 * gradvmin.transpose();
-        //   gradViolaVmint = alpha * gradvmin.transpose() * acc;
-        //   jerkOpt_.get_gdC().block<6, 3>(i * 6, 0) += omg * step * gradViolaVminc;
-        //   gdT(i) += omg * (costvmin / K + step * gradViolaVmint);
-        //   costs(2) += omg * step * costvmin;
-        // }
-
         // angular vel < max angular velocity
-        if (feasibilityGradCostOPositive(omga, gradop, costop))
+        if (feasibilityGradCostOPositive(omga, gradop, costop) && vel_sqn >= 1e-4)
         {
           // grad to coeff
           Eigen::Matrix<double, 6, 3> domga_dc;
@@ -1425,7 +1414,7 @@ namespace ego_planner
         }
 
         // angular vel > - max angular velocity
-        if (feasibilityGradCostONegative(omga, gradon, coston))
+        if (feasibilityGradCostONegative(omga, gradon, coston) && vel_sqn >= 1e-4)
         {
           // grad to coeff
           Eigen::Matrix<double, 6, 3> domga_dc;
@@ -1456,7 +1445,7 @@ namespace ego_planner
         }
 
         // angular acc < max angular acc
-        if (feasibilityGradCostAlPositive(alph, gradalp, costalp))
+        if (feasibilityGradCostAlPositive(alph, gradalp, costalp) && vel_sqn >= 1e-4)
         {
           // grad to coeff
           Eigen::Matrix<double, 6, 3> dalph_dc;
@@ -1495,7 +1484,7 @@ namespace ego_planner
         }
 
         // angular acc > - max angular acc
-        if (feasibilityGradCostAlNegative(alph, gradaln, costaln))
+        if (feasibilityGradCostAlNegative(alph, gradaln, costaln) && vel_sqn >= 1e-4)
         {
           // grad to coeff
           Eigen::Matrix<double, 6, 3> dalph_dc;
@@ -1743,18 +1732,6 @@ namespace ego_planner
     }
     return false;
   }
-
-//  bool PolyTrajOptimizer::feasibilityGradCostVmin(const Eigen::Vector3d &v, Eigen::Vector3d &gradv, double &costv)
-//  {
-//    double vpen = -v.squaredNorm() + 0.01 * 0.01;
-//    if (vpen > 0)
-//    {
-//      gradv = wei_feas_ * 6 * vpen * vpen * (-v);
-//      costv = wei_feas_ * vpen * vpen * vpen;
-//      return true;
-//    }
-//    return false;
-//  }
 
   bool PolyTrajOptimizer::feasibilityGradCostOPositive(const double &o, double &grado, double &costo)
   {
