@@ -158,11 +158,16 @@ namespace ego_planner
 
       if (planFromLocalTraj(1))
       {
+        replan_success_new_wp = true;
         changeFSMExecState(EXEC_TRAJ, "FSM");
       }
       else
       {
         changeFSMExecState(REPLAN_TRAJ, "FSM");
+        if ((continously_called_times_ > 200 && replan_success_new_wp) || (continously_called_times_ > 50 && !replan_success_new_wp))
+        {
+          changeFSMExecState(EMERGENCY_STOP, "FSM");
+        }
       }
 
       break;
@@ -208,7 +213,8 @@ namespace ego_planner
       }
       else if (t_cur > replan_thresh_ || (!touch_the_goal && close_to_current_traj_end)) // case 3: time to perform next replan
       {
-        changeFSMExecState(REPLAN_TRAJ, "FSM");
+        if ((final_goal_ - odom_pos_).norm() > 1.25 * odom_vel_.norm())
+          changeFSMExecState(REPLAN_TRAJ, "FSM");
       }
       // ROS_ERROR("AAAA");
 
@@ -529,6 +535,7 @@ namespace ego_planner
 
       have_target_ = true;
       have_new_target_ = true;
+      replan_success_new_wp = false;
 
       /*** FSM ***/
       if (exec_state_ != WAIT_TARGET)
@@ -538,7 +545,14 @@ namespace ego_planner
           ros::spinOnce();
           ros::Duration(0.001).sleep();
         }
-        changeFSMExecState(REPLAN_TRAJ, "TRIG");
+        if (
+              odom_vel_.norm() < 0.1 ||
+              (final_goal_ - odom_pos_).norm() < 1.25 * odom_vel_.norm() ||
+              odom_vel_.normalized().transpose() * (final_goal_ - odom_pos_).normalized() < 0.3
+        )
+          changeFSMExecState(EMERGENCY_STOP, "TRIG");
+        else
+          changeFSMExecState(REPLAN_TRAJ, "TRIG");
       }
       
       // visualization_->displayGoalPoint(final_goal_, Eigen::Vector4d(1, 0, 0, 1), 0.3, 0);

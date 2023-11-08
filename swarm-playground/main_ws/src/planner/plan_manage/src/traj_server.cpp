@@ -243,7 +243,14 @@ void cmdCallback(const ros::TimerEvent &e)
     slowly_turn_to_center_target_ = atan2(CENTER[1] - pos(1), CENTER[0] - pos(0));
 
     // publish
-    publish_cmd(pos, vel, acc, jer, yaw_yawdot.first, yaw_yawdot.second, yaw_dd);
+    if (vel.norm() >= 0.01)
+    {
+        publish_cmd(pos, vel, acc, jer, yaw_yawdot.first, yaw_yawdot.second, yaw_dd);
+    }
+    else
+    {
+        publish_cmd(pos, Vector3d::Zero(), Vector3d::Zero(), Vector3d::Zero(), yaw_yawdot.first, 0, 0);
+    }
 #if FLIP_YAW_AT_END or TURN_YAW_TO_CENTER_AT_END
     finished = false;
 #endif

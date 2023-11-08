@@ -76,6 +76,7 @@ namespace ego_planner
     bool flag_escape_emergency_;
 
     bool have_trigger_, have_target_, have_odom_, have_new_target_, have_recv_pre_agent_, touch_goal_, mandatory_stop_;
+    bool replan_success_new_wp;
     FSM_EXEC_STATE exec_state_;
     int continously_called_times_{0};
 
