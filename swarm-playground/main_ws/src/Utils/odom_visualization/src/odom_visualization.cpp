@@ -8,11 +8,11 @@
 #include "nav_msgs/Path.h"
 #include "sensor_msgs/Range.h"
 #include "visualization_msgs/Marker.h"
-#include "armadillo"
+//#include "armadillo"
 #include "pose_utils.h"
 #include "quadrotor_msgs/PositionCommand.h"
 
-using namespace arma;
+//using namespace arma;
 using namespace std;
 
 static string mesh_resource;
@@ -25,7 +25,7 @@ bool cov_vel = false;
 bool cov_color = false;
 bool origin = false;
 bool isOriginSet = false;
-colvec poseOrigin(6);
+Eigen::Vector<double, 6> poseOrigin;
 ros::Publisher posePub;
 ros::Publisher pathPub;
 ros::Publisher velPub;
@@ -53,18 +53,18 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   if (msg->header.frame_id == string("null"))
     return;
 
-  colvec pose(6);
+  Eigen::Vector<double, 6> pose;
   pose(0) = msg->pose.pose.position.x;
   pose(1) = msg->pose.pose.position.y;
   pose(2) = msg->pose.pose.position.z;
-  colvec q(4);
+  Eigen::Vector4d q(4);
 
   q(0) = msg->pose.pose.orientation.w;
   q(1) = msg->pose.pose.orientation.x;
   q(2) = msg->pose.pose.orientation.y;
   q(3) = msg->pose.pose.orientation.z;
-  pose.rows(3, 5) = R_to_ypr(quaternion_to_R(q));
-  colvec vel(3);
+  pose.segment(3, 3) = R_to_ypr(quaternion_to_R(q));
+  Eigen::Vector3d vel(3);
 
   vel(0) = msg->twist.twist.linear.x;
   vel(1) = msg->twist.twist.linear.y;
@@ -77,9 +77,9 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   }
   if (origin)
   {
-    vel = trans(ypr_to_R(pose.rows(3, 5))) * vel;
+    vel = ypr_to_R(pose.segment(3, 3)).transpose() * vel;
     pose = pose_update(pose_inverse(poseOrigin), pose);
-    vel = ypr_to_R(pose.rows(3, 5)) * vel;
+    vel = ypr_to_R(pose.segment(3, 3)) * vel;
   }
 
   // Pose
@@ -89,7 +89,7 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   poseROS.pose.position.x = pose(0);
   poseROS.pose.position.y = pose(1);
   poseROS.pose.position.z = pose(2);
-  q = R_to_quaternion(ypr_to_R(pose.rows(3, 5)));
+  q = R_to_quaternion(ypr_to_R(pose.segment(3, 3)));
   poseROS.pose.orientation.w = q(0);
   poseROS.pose.orientation.x = q(1);
   poseROS.pose.orientation.y = q(2);
@@ -97,9 +97,9 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   posePub.publish(poseROS);
 
   // Velocity
-  colvec yprVel(3);
+  Eigen::Vector3d yprVel;
   yprVel(0) = atan2(vel(1), vel(0));
-  yprVel(1) = -atan2(vel(2), norm(vel.rows(0, 1), 2));
+  yprVel(1) = -atan2(vel(2), vel.segment(0, 2).norm());
   yprVel(2) = 0;
   q = R_to_quaternion(ypr_to_R(yprVel));
   velROS.header.frame_id = string("world");
@@ -115,7 +115,7 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   velROS.pose.orientation.x = q(1);
   velROS.pose.orientation.y = q(2);
   velROS.pose.orientation.z = q(3);
-  velROS.scale.x = norm(vel, 2);
+  velROS.scale.x = vel.norm();
   velROS.scale.y = 0.05;
   velROS.scale.z = 0.05;
   velROS.color.a = 1.0;
@@ -151,20 +151,20 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   // Covariance Position
   if (cov_pos)
   {
-    mat P(6, 6);
+    Eigen::Matrix<double, 6, 6> P;
     for (int j = 0; j < 6; j++)
       for (int i = 0; i < 6; i++)
         P(i, j) = msg->pose.covariance[i + j * 6];
-    colvec eigVal;
-    mat eigVec;
-    eig_sym(eigVal, eigVec, P.submat(0, 0, 2, 2));
-    if (det(eigVec) < 0)
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigensolver(P.block<3, 3>(0, 0));
+    Eigen::VectorXd eigVal = eigensolver.eigenvalues();
+    Eigen::MatrixXd eigVec = eigensolver.eigenvectors();
+    if (eigVec.determinant() < 0)
     {
       for (int k = 0; k < 3; k++)
       {
-        mat eigVecRev = eigVec;
+        Eigen::MatrixXd eigVecRev = eigVec;
         eigVecRev.col(k) *= -1;
-        if (det(eigVecRev) > 0)
+        if (eigVecRev.determinant() > 0)
         {
           eigVec = eigVecRev;
           break;
@@ -198,22 +198,22 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   // Covariance Velocity
   if (cov_vel)
   {
-    mat P(3, 3);
+    Eigen::Matrix3d P;
     for (int j = 0; j < 3; j++)
       for (int i = 0; i < 3; i++)
         P(i, j) = msg->twist.covariance[i + j * 6];
-    mat R = ypr_to_R(pose.rows(3, 5));
-    P = R * P * trans(R);
-    colvec eigVal;
-    mat eigVec;
-    eig_sym(eigVal, eigVec, P);
-    if (det(eigVec) < 0)
+    Eigen::Matrix3d R = ypr_to_R(pose.segment(3, 3));
+    P = R * P * R.transpose();
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigensolver(P);
+    Eigen::VectorXd eigVal = eigensolver.eigenvalues();
+    Eigen::MatrixXd eigVec = eigensolver.eigenvectors();
+    if (eigVec.determinant() < 0)
     {
       for (int k = 0; k < 3; k++)
       {
-        mat eigVecRev = eigVec;
+        Eigen::MatrixXd eigVecRev = eigVec;
         eigVecRev.col(k) *= -1;
-        if (det(eigVecRev) > 0)
+        if (eigVecRev.determinant() > 0)
         {
           eigVec = eigVecRev;
           break;
@@ -245,7 +245,7 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   }
 
   // Color Coded Trajectory
-  static colvec ppose = pose;
+  static Eigen::Vector<double, 6> ppose = pose;
   static ros::Time pt = msg->header.stamp;
   ros::Time t = msg->header.stamp;
   if ((t - pt).toSec() > 0.5)
@@ -339,12 +339,12 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   q(1) = msg->pose.pose.orientation.x;
   q(2) = msg->pose.pose.orientation.y;
   q(3) = msg->pose.pose.orientation.z;
-  colvec ypr = R_to_ypr(quaternion_to_R(q));
+  Eigen::Vector3d ypr = R_to_ypr(quaternion_to_R(q));
   ypr(0) += rotate_yaw * PI / 180.0;
   q = R_to_quaternion(ypr_to_R(ypr));
   if (cross_config)
   {
-    colvec ypr = R_to_ypr(quaternion_to_R(q));
+    Eigen::Vector3d ypr = R_to_ypr(quaternion_to_R(q));
     ypr(0) += 45.0 * PI / 180.0;
     q = R_to_quaternion(ypr_to_R(ypr));
   }
@@ -371,16 +371,16 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
 
     tf::Transform transform45;
     transform45.setOrigin(tf::Vector3(0, 0, 0));
-    colvec y45 = zeros<colvec>(3);
+    Eigen::Vector3d y45 = Eigen::Vector3d::Zero();
     y45(0) = 45.0 * M_PI / 180;
-    colvec q45 = R_to_quaternion(ypr_to_R(y45));
+    Eigen::Vector4d q45 = R_to_quaternion(ypr_to_R(y45));
     transform45.setRotation(tf::Quaternion(q45(1), q45(2), q45(3), q45(0)));
 
     tf::Transform transform90;
     transform90.setOrigin(tf::Vector3(0, 0, 0));
-    colvec p90 = zeros<colvec>(3);
+    Eigen::Vector3d p90 = Eigen::Vector3d::Zero();
     p90(1) = 90.0 * M_PI / 180;
-    colvec q90 = R_to_quaternion(ypr_to_R(p90));
+    Eigen::Vector4d q90 = R_to_quaternion(ypr_to_R(p90));
     transform90.setRotation(tf::Quaternion(q90(1), q90(2), q90(3), q90(0)));
 
     string base_s = _drone_id == -1 ? string("base") : string("base") + std::to_string(_drone_id);
@@ -400,16 +400,16 @@ void cmd_callback(const quadrotor_msgs::PositionCommand cmd)
   if (cmd.header.frame_id == string("null"))
     return;
 
-  colvec pose(6);
+  Eigen::Vector<double, 6> pose;
   pose(0) = cmd.position.x;
   pose(1) = cmd.position.y;
   pose(2) = cmd.position.z;
-  colvec q(4);
+  Eigen::Vector4d q;
   q(0) = 1.0;
   q(1) = 0.0;
   q(2) = 0.0;
   q(3) = 0.0;
-  pose.rows(3, 5) = R_to_ypr(quaternion_to_R(q));
+  pose.segment(3, 3) = R_to_ypr(quaternion_to_R(q));
 
   // Mesh model
   meshROS.header.frame_id = _frame_id;
@@ -424,7 +424,7 @@ void cmd_callback(const quadrotor_msgs::PositionCommand cmd)
 
   if (cross_config)
   {
-    colvec ypr = R_to_ypr(quaternion_to_R(q));
+    Eigen::Vector3d ypr = R_to_ypr(quaternion_to_R(q));
     ypr(0) += 45.0 * PI / 180.0;
     q = R_to_quaternion(ypr_to_R(ypr));
   }
