@@ -25,7 +25,7 @@ bool cov_vel = false;
 bool cov_color = false;
 bool origin = false;
 bool isOriginSet = false;
-Eigen::Vector<double, 6> poseOrigin;
+Eigen::Matrix<double, 6, 1> poseOrigin;
 ros::Publisher posePub;
 ros::Publisher pathPub;
 ros::Publisher velPub;
@@ -53,7 +53,7 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   if (msg->header.frame_id == string("null"))
     return;
 
-  Eigen::Vector<double, 6> pose;
+  Eigen::Matrix<double, 6, 1> pose;
   pose(0) = msg->pose.pose.position.x;
   pose(1) = msg->pose.pose.position.y;
   pose(2) = msg->pose.pose.position.z;
@@ -245,7 +245,7 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
   }
 
   // Color Coded Trajectory
-  static Eigen::Vector<double, 6> ppose = pose;
+  static Eigen::Matrix<double, 6, 1> ppose = pose;
   static ros::Time pt = msg->header.stamp;
   ros::Time t = msg->header.stamp;
   if ((t - pt).toSec() > 0.5)
@@ -400,7 +400,7 @@ void cmd_callback(const quadrotor_msgs::PositionCommand cmd)
   if (cmd.header.frame_id == string("null"))
     return;
 
-  Eigen::Vector<double, 6> pose;
+  Eigen::Matrix<double, 6, 1> pose;
   pose(0) = cmd.position.x;
   pose(1) = cmd.position.y;
   pose(2) = cmd.position.z;

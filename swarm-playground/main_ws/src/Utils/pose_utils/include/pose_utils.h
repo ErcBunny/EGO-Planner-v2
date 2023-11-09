@@ -32,10 +32,10 @@ Eigen::Vector4d R_to_quaternion(const Eigen::Matrix3d& R);
 
 // General Pose Update ----------
 //colvec pose_update(const colvec& X1, const colvec& X2);
-Eigen::Vector<double, 6> pose_update(const Eigen::Vector<double, 6>& X1, const Eigen::Vector<double, 6>& X2);
+Eigen::Matrix<double, 6, 1> pose_update(const Eigen::Matrix<double, 6, 1>& X1, const Eigen::Matrix<double, 6, 1>& X2);
 
 //colvec pose_inverse(const colvec& X);
-Eigen::Vector<double, 6> pose_inverse(const Eigen::Vector<double, 6>& X);
+Eigen::Matrix<double, 6, 1> pose_inverse(const Eigen::Matrix<double, 6, 1>& X);
 
 //colvec pose_update_2d(const colvec& X1, const colvec& X2);
 

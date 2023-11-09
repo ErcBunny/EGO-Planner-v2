@@ -309,7 +309,7 @@ Eigen::Vector4d R_to_quaternion(const Eigen::Matrix3d& R)
 //  return X3;
 //}
 
-Eigen::Vector<double, 6> pose_update(const Eigen::Vector<double, 6>& X1, const Eigen::Vector<double, 6>& X2)
+Eigen::Matrix<double, 6, 1> pose_update(const Eigen::Matrix<double, 6, 1>& X1, const Eigen::Matrix<double, 6, 1>& X2)
 {
     Eigen::Vector3d ypr1, ypr2, ypr3;
     ypr1 = X1.segment(3, 3);
@@ -324,7 +324,7 @@ Eigen::Vector<double, 6> pose_update(const Eigen::Vector<double, 6>& X1, const E
     X2xyz = X2.segment(0, 3);
     X3xyz = X1xyz + R1 * X2xyz;
 
-    Eigen::Vector<double, 6> X3;
+    Eigen::Matrix<double, 6, 1> X3;
     X3.segment(0, 3) = X3xyz;
     X3.segment(3, 3) = ypr3;
     return X3;
@@ -350,7 +350,7 @@ Eigen::Vector<double, 6> pose_update(const Eigen::Vector<double, 6>& X1, const E
 //  return XI;
 //}
 
-Eigen::Vector<double, 6> pose_inverse(const Eigen::Vector<double, 6>& X)
+Eigen::Matrix<double, 6, 1> pose_inverse(const Eigen::Matrix<double, 6, 1>& X)
 {
     Eigen::Matrix3d R = ypr_to_R(X.segment(3, 3));
     Eigen::Vector3d n = R.col(0);
@@ -364,7 +364,7 @@ Eigen::Vector<double, 6> pose_inverse(const Eigen::Vector<double, 6>& X)
     double XIr = atan2(n(2)*sin(XIy)-o(2)*cos(XIy), -n(1)*sin(XIy)+o(1)*cos(XIy));
     XIypr << XIy, XIp, XIr;
 
-    Eigen::Vector<double, 6> XI;
+    Eigen::Matrix<double, 6, 1> XI;
     XI.segment(0, 3) = XIxyz;
     XI.segment(3, 3) = XIypr;
     return XI;
