@@ -1388,9 +1388,9 @@ namespace ego_planner
           // grad to coeff
           Eigen::Matrix<double, 6, 3> domga_dc;
 
-          const Eigen::Matrix3d z{{0, -1, 0},
-                                  {1,  0, 0},
-                                  {0,  0, 0}};
+          Eigen::Matrix3d z;
+          z << 0, -1, 0, 1, 0, 0, 0, 0, 0;
+
           auto tmp0 = beta2 * beta1.transpose() * c * z.transpose();
           auto tmp1 = beta1 * beta2.transpose() * c * z.transpose();
           auto term0 = (tmp0 + tmp1) / vel_sqn;
@@ -1419,9 +1419,9 @@ namespace ego_planner
           // grad to coeff
           Eigen::Matrix<double, 6, 3> domga_dc;
 
-          const Eigen::Matrix3d z{{0, -1, 0},
-                                  {1,  0, 0},
-                                  {0,  0, 0}};
+          Eigen::Matrix3d z;
+          z << 0, -1, 0, 1, 0, 0, 0, 0, 0;
+
           auto tmp0 = beta2 * beta1.transpose() * c * z.transpose();
           auto tmp1 = beta1 * beta2.transpose() * c * z.transpose();
           auto term0 = (tmp0 + tmp1) / vel_sqn;
@@ -1450,9 +1450,8 @@ namespace ego_planner
           // grad to coeff
           Eigen::Matrix<double, 6, 3> dalph_dc;
 
-          const Eigen::Matrix3d z{{0, -1, 0},
-                                  {1,  0, 0},
-                                  {0,  0, 0}};
+          Eigen::Matrix3d z;
+          z << 0, -1, 0, 1, 0, 0, 0, 0, 0;
 
           double cc12 = beta1.transpose() * c * c.transpose() * beta2;
           double czc12 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
@@ -1489,9 +1488,8 @@ namespace ego_planner
           // grad to coeff
           Eigen::Matrix<double, 6, 3> dalph_dc;
 
-          const Eigen::Matrix3d z{{0, -1, 0},
-                                  {1,  0, 0},
-                                  {0,  0, 0}};
+          Eigen::Matrix3d z;
+          z << 0, -1, 0, 1, 0, 0, 0, 0, 0;
 
           double cc12 = beta1.transpose() * c * c.transpose() * beta2;
           double czc12 = beta1.transpose() * c * z.transpose() * c.transpose() * beta2;
