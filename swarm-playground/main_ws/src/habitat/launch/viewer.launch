@@ -1,0 +1,29 @@
+<launch>
+
+    <arg name="scene"                   default="$(find habitat)/data/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"/>
+    <arg name="dataset"                 default="$(find habitat)/data/mp3d_example/17DRP5sb8fy/mp3d.scene-dataset-config.json"/>
+    <arg name="disable-physics"         default="false"/>
+    <arg name="use-default-lighting"    default="false"/>
+    <arg name="hbao"                    default="false"/>
+    <arg name="enable-batch-renderer"   default="false"/>
+    <arg name="num-environments"        default="1"/>
+    <arg name="composite-files"         default="none"/>
+    <arg name="width"                   default="640"/>
+    <arg name="height"                  default="480"/>
+
+    <node pkg="habitat" name="habitat_viewer" type="viewer.py">
+        <param name="scene"                 type="str"  value="$(arg scene)"/>
+        <param name="dataset"               type="str"  value="$(arg dataset)"/>
+        <param name="disable_physics"       type="bool" value="$(arg disable-physics)"/>
+        <param name="use_default_lighting"  type="bool" value="$(arg use-default-lighting)"/>
+        <param name="hbao"                  type="bool" value="$(arg hbao)"/>
+        <param name="enable_batch_renderer" type="bool" value="$(arg enable-batch-renderer)"/>
+        <param name="num_environments"      type="int"  value="$(arg num-environments)"/>
+        <param name="composite_files"       type="str"  value="$(arg composite-files)"/>
+        <param name="width"                 type="int"  value="$(arg width)"/>
+        <param name="height"                type="int"  value="$(arg height)"/>
+    </node>
+
+    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find habitat)/launch/configs/viewer.rviz" />
+
+</launch>
