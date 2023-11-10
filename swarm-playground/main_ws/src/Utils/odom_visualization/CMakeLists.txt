@@ -137,8 +137,8 @@ catkin_package(
 ###########
 ## Build ##
 ###########
-find_package(Armadillo REQUIRED)
-include_directories(${ARMADILLO_INCLUDE_DIRS})
+# find_package(Armadillo REQUIRED)
+# include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 
 ## Specify additional locations of header files
@@ -163,7 +163,7 @@ add_executable(odom_visualization src/odom_visualization.cpp)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(odom_visualization
    ${catkin_LIBRARIES}
-   ${ARMADILLO_LIBRARIES}
+  #  ${ARMADILLO_LIBRARIES}
    pose_utils
 )
 

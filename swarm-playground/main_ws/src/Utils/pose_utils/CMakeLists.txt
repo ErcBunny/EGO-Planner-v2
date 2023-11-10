@@ -18,14 +18,14 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-find_package(Armadillo REQUIRED)
+# find_package(Armadillo REQUIRED)
 
 include_directories(
     ${catkin_INCLUDE_DIRS}
-    ${ARMADILLO_INCLUDE_DIRS}
+    # ${ARMADILLO_INCLUDE_DIRS}
     include
     )
 
 add_library(pose_utils 
-   ${ARMADILLO_LIBRARIES}
+  #  ${ARMADILLO_LIBRARIES}
    src/pose_utils.cpp)
