@@ -5,6 +5,16 @@ https://aihabitat.org/docs/habitat-sim/habitat_sim.simulator.Configuration.html.
 `batch_rendering` is for rendering a batch of sensor output in multiple scenes, here we turn it off.
 `metadata_mediator` is for swapping the active SceneDataset, here we set it to None.
 Simulator and agent configs are listed below. -->
+
+<!-- Global point cloud start -->
+
+    <arg name="mesh_sampling_point"
+        default="1000000"/>
+
+    <arg name="global_pcd_downsample_voxel_size"
+        default="0.1"/>
+
+<!-- Global point cloud end -->
     
 <!-- SimulatorConfiguration start -->
 
@@ -278,8 +288,12 @@ Simulator and agent configs are listed below. -->
     v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
     Here we assume RGBD and semantics are aligned and have the same dimensions.
     Sensor model is pinhole for all.
+
     Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
-    Body frame: xyz-RUB -->
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
     
     <!-- relative to body frame, unit m or rad -->
     <arg name="sensor_translation_x_agent_0"
@@ -370,8 +384,12 @@ Simulator and agent configs are listed below. -->
     v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
     Here we assume RGBD and semantics are aligned and have the same dimensions.
     Sensor model is pinhole for all.
+
     Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
-    Body frame: xyz-RUB -->
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
     
     <!-- relative to body frame, unit m or rad -->
     <arg name="sensor_translation_x_agent_1"
@@ -462,8 +480,12 @@ Simulator and agent configs are listed below. -->
     v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
     Here we assume RGBD and semantics are aligned and have the same dimensions.
     Sensor model is pinhole for all.
+
     Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
-    Body frame: xyz-RUB -->
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
     
     <!-- relative to body frame, unit m or rad -->
     <arg name="sensor_translation_x_agent_2"
@@ -518,7 +540,13 @@ Simulator and agent configs are listed below. -->
 
 <!-- AgentConfiguration 2 stop -->
 
+<!-- node habitat simulator start -->
+
     <node pkg="habitat" name="habitat_simulator" type="simulator.py" output="screen">
+
+        <!-- Global point cloud -->
+        <param name="mesh_sampling_point"                       type="int"      value="$(arg mesh_sampling_point)"/>
+        <param name="global_pcd_downsample_voxel_size"          type="double"   value="$(arg global_pcd_downsample_voxel_size)"/>
 
         <!-- SimulatorConfiguration -->
         <param name="allow_sliding"                             type="bool"     value="$(arg allow_sliding)"/>
@@ -558,6 +586,9 @@ Simulator and agent configs are listed below. -->
         <param name="region_merge_size"                         type="double"   value="$(arg region_merge_size)"/>
         <param name="region_min_size"                           type="double"   value="$(arg region_min_size)"/>
         <param name="verts_per_poly"                            type="double"   value="$(arg verts_per_poly)"/>
+
+        <!-- agent count -->
+        <param name="agent_count"                               type="int"      value="3"/>
 
         <!-- AgentConfiguration 0 -->
         <param name="body_type_agent_0"                         type="str"      value="$(arg body_type_agent_0)"/>
@@ -638,5 +669,7 @@ Simulator and agent configs are listed below. -->
         <param name="init_quaternion_w_agent_2"                 type="double"   value="$(arg init_quaternion_w_agent_2)"/>
 
     </node>
+
+<!-- node habitat simulator stop -->
 
 </launch>
