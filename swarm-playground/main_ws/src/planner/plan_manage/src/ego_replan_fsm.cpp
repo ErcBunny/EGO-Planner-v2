@@ -67,9 +67,9 @@ namespace ego_planner
     {
       trigger_sub_ = nh.subscribe("/traj_start_trigger", 1, &EGOReplanFSM::triggerCallback, this);
 
-      ROS_INFO("Wait for 2 second.");
+      ROS_INFO("Wait for 6 seconds as it takes time to generate global cloud.");
       int count = 0;
-      while (ros::ok() && count++ < 2000)
+      while (ros::ok() && count++ < 6000)
       {
         ros::spinOnce();
         ros::Duration(0.001).sleep();
@@ -602,7 +602,7 @@ namespace ego_planner
 
     ROS_INFO("Received goal: %f, %f, %f", msg->goal[0], msg->goal[1], msg->goal[2]);
 
-    Eigen::Vector3d end_wp(msg->goal[0], msg->goal[1], msg->goal[2]);
+    Eigen::Vector3d end_wp(msg->goal[0], msg->goal[1], odom_pos_(2));
     if (planNextWaypoint(end_wp))
     {
       have_trigger_ = true;
@@ -620,7 +620,7 @@ namespace ego_planner
 
     ROS_INFO("Received goal: %f, %f, %f, %f", msg.pose.position.x, msg.pose.position.y, msg.pose.position.z, yaw);
 
-    Eigen::Vector3d end_wp(msg.pose.position.x, msg.pose.position.y, msg.pose.position.z);
+    Eigen::Vector3d end_wp(msg.pose.position.x, msg.pose.position.y, odom_pos_(2));
     if (planNextWaypoint(end_wp))
     {
       have_trigger_ = true;

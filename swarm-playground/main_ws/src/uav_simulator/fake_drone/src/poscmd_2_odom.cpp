@@ -31,7 +31,8 @@ void pubOdom()
 	    odom.pose.pose.position.y = _cmd.position.y;
 	    odom.pose.pose.position.z = _cmd.position.z;
 
-		Eigen::Vector3d alpha = Eigen::Vector3d(_cmd.acceleration.x, _cmd.acceleration.y, _cmd.acceleration.z) + 9.8*Eigen::Vector3d(0,0,1);
+		// Eigen::Vector3d alpha = Eigen::Vector3d(_cmd.acceleration.x, _cmd.acceleration.y, _cmd.acceleration.z) + 9.8*Eigen::Vector3d(0,0,1);
+		Eigen::Vector3d alpha = Eigen::Vector3d(0, 0, 1);
 		Eigen::Vector3d xC(cos(_cmd.yaw), sin(_cmd.yaw), 0);
 		Eigen::Vector3d yC(-sin(_cmd.yaw), cos(_cmd.yaw), 0);
 		Eigen::Vector3d xB = (yC.cross(alpha)).normalized();
@@ -51,9 +52,9 @@ void pubOdom()
 	    odom.twist.twist.linear.y = _cmd.velocity.y;
 	    odom.twist.twist.linear.z = _cmd.velocity.z;
 
-	    odom.twist.twist.angular.x = _cmd.acceleration.x;
-	    odom.twist.twist.angular.y = _cmd.acceleration.y;
-	    odom.twist.twist.angular.z = _cmd.acceleration.z;
+	    odom.twist.twist.angular.x = 0;
+	    odom.twist.twist.angular.y = 0;
+	    odom.twist.twist.angular.z = _cmd.yaw_dot;
 	}
 	else
 	{
