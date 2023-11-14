@@ -1,5 +1,8 @@
 <launch>
 
+    <arg name="render_fps"
+        default="30"/>
+
 <!-- Settings for the simulator can be found at
 https://aihabitat.org/docs/habitat-sim/habitat_sim.simulator.Configuration.html.
 `batch_rendering` is for rendering a batch of sensor output in multiple scenes, here we turn it off.
@@ -13,6 +16,15 @@ Simulator and agent configs are listed below. -->
 
     <arg name="global_pcd_downsample_voxel_size"
         default="0.1"/>
+
+    <arg name="global_pcd_publish_topic"
+        default="/map_generator/global_cloud"/>
+
+    <arg name="global_pcd_reference_frame"
+        default="map"/>
+
+    <arg name="offset_z"
+        default="0"/>
 
 <!-- Global point cloud end -->
     
@@ -72,9 +84,10 @@ Simulator and agent configs are listed below. -->
         default="true"/>
 
     <!-- int gpuDeviceId
-    The system GPU device to use for rendering. -->
+    The system GPU device to use for rendering.
+    Value -1 means using the integrated GPU. Values >= 0 are for CUDA devices. -->
     <arg name="gpu_device_id"
-        default="0"/>
+        default="-1"/>
 
     <!-- bool leaveContextWithBackgroundRenderer
     Leave the context with the background thread after finishing draw
@@ -254,6 +267,21 @@ Simulator and agent configs are listed below. -->
 
 <!-- AgentConfiguration 0 start -->
 
+    <arg name="odom_topic_agent_0"
+        default="/agent_0_visual_slam/odom"/>
+
+    <arg name="color_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/color/image_raw"/>
+
+    <arg name="depth_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/depth/image_raw"/>
+
+    <arg name="semantic_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/semantic/image_raw"/>
+
+    <arg name="depth_trunc_meters_agent_0"
+        default="4"/>
+
     <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
     latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
     v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
@@ -348,207 +376,20 @@ Simulator and agent configs are listed below. -->
 
 <!-- AgentConfiguration 0 stop -->
 
-<!-- AgentConfiguration 1 start -->
-
-    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
-    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
-    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
-    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
-
-    <arg name="body_type_agent_1"
-        default="cylinder"/>
-
-    <arg name="height_agent_1"
-        default="1"/>
-
-    <arg name="radius_agent_1"
-        default="0.25"/>
-
-    <arg name="forward_step_meter_agent_1"
-        default="0.2"/>
-
-    <arg name="lookup_step_degree_agent_1"
-        default="10"/>
-
-    <arg name="lookdown_step_degree_agent_1"
-        default="10"/>
-
-    <arg name="left_step_degree_agent_1"
-        default="10"/>
-
-    <arg name="right_step_degree_agent_1"
-        default="10"/>
-
-    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
-    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
-    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
-    Here we assume RGBD and semantics are aligned and have the same dimensions.
-    Sensor model is pinhole for all.
-
-    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
-    Habitat body frame: XYZ-RUB.
-    
-    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
-    which is the convention adopted in EGO planner. -->
-    
-    <!-- relative to body frame, unit m or rad -->
-    <arg name="sensor_translation_x_agent_1"
-        default="0"/>
-
-    <arg name="sensor_translation_y_agent_1"
-        default="0"/>
-
-    <arg name="sensor_translation_z_agent_1"
-        default="0"/>
-
-    <arg name="sensor_rotation_x_agent_1"
-        default="0"/>
-
-    <arg name="sensor_rotation_y_agent_1"
-        default="0"/>
-
-    <arg name="sensor_rotation_z_agent_1"
-        default="0"/>
-
-    <!-- horizontal FOV in degrees -->
-    <arg name="hfov_agent_1"
-        default="90"/>
-
-    <arg name="image_width_agent_1"
-        default="640"/>
-
-    <arg name="image_height_agent_1"
-        default="480"/>
-
-    <!-- relative to world frame -->
-    <arg name="init_translation_x_agent_1"
-        default="0"/>
-
-    <arg name="init_translation_y_agent_1"
-        default="0"/>
-
-    <arg name="init_translation_z_agent_1"
-        default="0"/>
-
-    <arg name="init_quaternion_x_agent_1"
-        default="0"/>
-
-    <arg name="init_quaternion_y_agent_1"
-        default="0"/>
-
-    <arg name="init_quaternion_z_agent_1"
-        default="0"/>
-
-    <arg name="init_quaternion_w_agent_1"
-        default="1"/>
-
-<!-- AgentConfiguration 1 stop -->
-
-<!-- AgentConfiguration 2 start -->
-
-    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
-    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
-    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
-    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
-
-    <arg name="body_type_agent_2"
-        default="cylinder"/>
-
-    <arg name="height_agent_2"
-        default="1"/>
-
-    <arg name="radius_agent_2"
-        default="0.25"/>
-
-    <arg name="forward_step_meter_agent_2"
-        default="0.2"/>
-
-    <arg name="lookup_step_degree_agent_2"
-        default="10"/>
-
-    <arg name="lookdown_step_degree_agent_2"
-        default="10"/>
-
-    <arg name="left_step_degree_agent_2"
-        default="10"/>
-
-    <arg name="right_step_degree_agent_2"
-        default="10"/>
-
-    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
-    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
-    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
-    Here we assume RGBD and semantics are aligned and have the same dimensions.
-    Sensor model is pinhole for all.
-
-    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
-    Habitat body frame: XYZ-RUB.
-    
-    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
-    which is the convention adopted in EGO planner. -->
-    
-    <!-- relative to body frame, unit m or rad -->
-    <arg name="sensor_translation_x_agent_2"
-        default="0"/>
-
-    <arg name="sensor_translation_y_agent_2"
-        default="0"/>
-
-    <arg name="sensor_translation_z_agent_2"
-        default="0"/>
-
-    <arg name="sensor_rotation_x_agent_2"
-        default="0"/>
-
-    <arg name="sensor_rotation_y_agent_2"
-        default="0"/>
-
-    <arg name="sensor_rotation_z_agent_2"
-        default="0"/>
-
-    <!-- horizontal FOV in degrees -->
-    <arg name="hfov_agent_2"
-        default="90"/>
-
-    <arg name="image_width_agent_2"
-        default="640"/>
-
-    <arg name="image_height_agent_2"
-        default="480"/>
-
-    <!-- relative to world frame -->
-    <arg name="init_translation_x_agent_2"
-        default="0"/>
-
-    <arg name="init_translation_y_agent_2"
-        default="0"/>
-
-    <arg name="init_translation_z_agent_2"
-        default="0"/>
-
-    <arg name="init_quaternion_x_agent_2"
-        default="0"/>
-
-    <arg name="init_quaternion_y_agent_2"
-        default="0"/>
-
-    <arg name="init_quaternion_z_agent_2"
-        default="0"/>
-
-    <arg name="init_quaternion_w_agent_2"
-        default="1"/>
-
-<!-- AgentConfiguration 2 stop -->
-
 <!-- node habitat simulator start -->
 
     <node pkg="habitat" name="habitat_simulator" type="simulator.py" output="screen">
 
-        <!-- Global point cloud -->
+        <param name="render_fps"                                type="int"      value="$(arg render_fps)"/>
+
+    <!-- Global point cloud -->
         <param name="mesh_sampling_point"                       type="int"      value="$(arg mesh_sampling_point)"/>
         <param name="global_pcd_downsample_voxel_size"          type="double"   value="$(arg global_pcd_downsample_voxel_size)"/>
+        <param name="global_pcd_publish_topic"                  type="str"      value="$(arg global_pcd_publish_topic)"/>
+        <param name="global_pcd_reference_frame"                type="str"      value="$(arg global_pcd_reference_frame)"/>
+        <param name="offset_z"                                  type="double"   value="$(arg offset_z)"/>
 
-        <!-- SimulatorConfiguration -->
+    <!-- SimulatorConfiguration -->
         <param name="allow_sliding"                             type="bool"     value="$(arg allow_sliding)"/>
         <param name="create_renderer"                           type="bool"     value="$(arg create_renderer)"/>
         <param name="default_agent_id"                          type="int"      value="$(arg default_agent_id)"/>
@@ -569,7 +410,7 @@ Simulator and agent configs are listed below. -->
         <param name="scene_id"                                  type="str"      value="$(arg scene_id)"/>
         <param name="use_semantic_textures"                     type="bool"     value="$(arg use_semantic_textures)"/>
         
-        <!-- NavMeshSettings -->
+    <!-- NavMeshSettings -->
         <param name="agent_height"                              type="double"   value="$(arg agent_height)"/>
         <param name="agent_max_climb"                           type="double"   value="$(arg agent_max_climb)"/>
         <param name="agent_max_slope"                           type="double"   value="$(arg agent_max_slope)"/>
@@ -587,10 +428,16 @@ Simulator and agent configs are listed below. -->
         <param name="region_min_size"                           type="double"   value="$(arg region_min_size)"/>
         <param name="verts_per_poly"                            type="double"   value="$(arg verts_per_poly)"/>
 
-        <!-- agent count -->
-        <param name="agent_count"                               type="int"      value="3"/>
+    <!-- agent count -->
+        <param name="agent_count"                               type="int"      value="1"/>
 
-        <!-- AgentConfiguration 0 -->
+    <!-- AgentConfiguration 0 -->
+        <param name="odom_topic_agent_0"                        type="str"      value="$(arg odom_topic_agent_0)"/>
+        <param name="color_image_raw_topic_agent_0"             type="str"      value="$(arg color_image_raw_topic_agent_0)"/>
+        <param name="depth_image_raw_topic_agent_0"             type="str"      value="$(arg depth_image_raw_topic_agent_0)"/>
+        <param name="semantic_image_raw_topic_agent_0"          type="str"      value="$(arg semantic_image_raw_topic_agent_0)"/>
+        <param name="depth_trunc_meters_agent_0"                type="double"   value="$(arg depth_trunc_meters_agent_0)"/>
+
         <param name="body_type_agent_0"                         type="str"      value="$(arg body_type_agent_0)"/>
         <param name="height_agent_0"                            type="double"   value="$(arg height_agent_0)"/>
         <param name="radius_agent_0"                            type="double"   value="$(arg radius_agent_0)"/>
@@ -615,58 +462,6 @@ Simulator and agent configs are listed below. -->
         <param name="init_quaternion_y_agent_0"                 type="double"   value="$(arg init_quaternion_y_agent_0)"/>
         <param name="init_quaternion_z_agent_0"                 type="double"   value="$(arg init_quaternion_z_agent_0)"/>
         <param name="init_quaternion_w_agent_0"                 type="double"   value="$(arg init_quaternion_w_agent_0)"/>
-
-        <!-- AgentConfiguration 1 -->
-        <param name="body_type_agent_1"                         type="str"      value="$(arg body_type_agent_1)"/>
-        <param name="height_agent_1"                            type="double"   value="$(arg height_agent_1)"/>
-        <param name="radius_agent_1"                            type="double"   value="$(arg radius_agent_1)"/>
-        <param name="forward_step_meter_agent_1"                type="double"   value="$(arg forward_step_meter_agent_1)"/>
-        <param name="lookup_step_degree_agent_1"                type="double"   value="$(arg lookup_step_degree_agent_1)"/>
-        <param name="lookdown_step_degree_agent_1"              type="double"   value="$(arg lookdown_step_degree_agent_1)"/>
-        <param name="left_step_degree_agent_1"                  type="double"   value="$(arg left_step_degree_agent_1)"/>
-        <param name="right_step_degree_agent_1"                 type="double"   value="$(arg right_step_degree_agent_1)"/>
-        <param name="sensor_translation_x_agent_1"              type="double"   value="$(arg sensor_translation_x_agent_1)"/>
-        <param name="sensor_translation_y_agent_1"              type="double"   value="$(arg sensor_translation_y_agent_1)"/>
-        <param name="sensor_translation_z_agent_1"              type="double"   value="$(arg sensor_translation_z_agent_1)"/>
-        <param name="sensor_rotation_x_agent_1"                 type="double"   value="$(arg sensor_rotation_x_agent_1)"/>
-        <param name="sensor_rotation_y_agent_1"                 type="double"   value="$(arg sensor_rotation_y_agent_1)"/>
-        <param name="sensor_rotation_z_agent_1"                 type="double"   value="$(arg sensor_rotation_z_agent_1)"/>
-        <param name="hfov_agent_1"                              type="double"   value="$(arg hfov_agent_1)"/>
-        <param name="image_width_agent_1"                       type="double"   value="$(arg image_width_agent_1)"/>
-        <param name="image_height_agent_1"                      type="double"   value="$(arg image_height_agent_1)"/>
-        <param name="init_translation_x_agent_1"                type="double"   value="$(arg init_translation_x_agent_1)"/>
-        <param name="init_translation_y_agent_1"                type="double"   value="$(arg init_translation_y_agent_1)"/>
-        <param name="init_translation_z_agent_1"                type="double"   value="$(arg init_translation_z_agent_1)"/>
-        <param name="init_quaternion_x_agent_1"                 type="double"   value="$(arg init_quaternion_x_agent_1)"/>
-        <param name="init_quaternion_y_agent_1"                 type="double"   value="$(arg init_quaternion_y_agent_1)"/>
-        <param name="init_quaternion_z_agent_1"                 type="double"   value="$(arg init_quaternion_z_agent_1)"/>
-        <param name="init_quaternion_w_agent_1"                 type="double"   value="$(arg init_quaternion_w_agent_1)"/>
-
-        <!-- AgentConfiguration 2 -->
-        <param name="body_type_agent_2"                         type="str"      value="$(arg body_type_agent_2)"/>
-        <param name="height_agent_2"                            type="double"   value="$(arg height_agent_2)"/>
-        <param name="radius_agent_2"                            type="double"   value="$(arg radius_agent_2)"/>
-        <param name="forward_step_meter_agent_2"                type="double"   value="$(arg forward_step_meter_agent_2)"/>
-        <param name="lookup_step_degree_agent_2"                type="double"   value="$(arg lookup_step_degree_agent_2)"/>
-        <param name="lookdown_step_degree_agent_2"              type="double"   value="$(arg lookdown_step_degree_agent_2)"/>
-        <param name="left_step_degree_agent_2"                  type="double"   value="$(arg left_step_degree_agent_2)"/>
-        <param name="right_step_degree_agent_2"                 type="double"   value="$(arg right_step_degree_agent_2)"/>
-        <param name="sensor_translation_x_agent_2"              type="double"   value="$(arg sensor_translation_x_agent_2)"/>
-        <param name="sensor_translation_y_agent_2"              type="double"   value="$(arg sensor_translation_y_agent_2)"/>
-        <param name="sensor_translation_z_agent_2"              type="double"   value="$(arg sensor_translation_z_agent_2)"/>
-        <param name="sensor_rotation_x_agent_2"                 type="double"   value="$(arg sensor_rotation_x_agent_2)"/>
-        <param name="sensor_rotation_y_agent_2"                 type="double"   value="$(arg sensor_rotation_y_agent_2)"/>
-        <param name="sensor_rotation_z_agent_2"                 type="double"   value="$(arg sensor_rotation_z_agent_2)"/>
-        <param name="hfov_agent_2"                              type="double"   value="$(arg hfov_agent_2)"/>
-        <param name="image_width_agent_2"                       type="double"   value="$(arg image_width_agent_2)"/>
-        <param name="image_height_agent_2"                      type="double"   value="$(arg image_height_agent_2)"/>
-        <param name="init_translation_x_agent_2"                type="double"   value="$(arg init_translation_x_agent_2)"/>
-        <param name="init_translation_y_agent_2"                type="double"   value="$(arg init_translation_y_agent_2)"/>
-        <param name="init_translation_z_agent_2"                type="double"   value="$(arg init_translation_z_agent_2)"/>
-        <param name="init_quaternion_x_agent_2"                 type="double"   value="$(arg init_quaternion_x_agent_2)"/>
-        <param name="init_quaternion_y_agent_2"                 type="double"   value="$(arg init_quaternion_y_agent_2)"/>
-        <param name="init_quaternion_z_agent_2"                 type="double"   value="$(arg init_quaternion_z_agent_2)"/>
-        <param name="init_quaternion_w_agent_2"                 type="double"   value="$(arg init_quaternion_w_agent_2)"/>
 
     </node>
 

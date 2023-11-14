@@ -1,0 +1,899 @@
+<launch>
+
+    <arg name="render_fps"
+        default="30"/>
+
+<!-- Settings for the simulator can be found at
+https://aihabitat.org/docs/habitat-sim/habitat_sim.simulator.Configuration.html.
+`batch_rendering` is for rendering a batch of sensor output in multiple scenes, here we turn it off.
+`metadata_mediator` is for swapping the active SceneDataset, here we set it to None.
+Simulator and agent configs are listed below. -->
+
+<!-- Global point cloud start -->
+
+    <arg name="mesh_sampling_point"
+        default="1000000"/>
+
+    <arg name="global_pcd_downsample_voxel_size"
+        default="0.1"/>
+
+    <arg name="global_pcd_publish_topic"
+        default="/map_generator/global_cloud"/>
+
+    <arg name="global_pcd_reference_frame"
+        default="map"/>
+
+    <arg name="offset_z"
+        default="0"/>
+
+<!-- Global point cloud end -->
+    
+<!-- SimulatorConfiguration start -->
+
+    <!-- habitat_sim.sim.SimulatorConfiguration | habitat-sim/src/esp/sim/SimulatorConfiguration.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sim.SimulatorConfiguration.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sim/SimulatorConfiguration.h#L16
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sim/SimulatorConfiguration.h#L16 -->
+
+    <!-- bool allowSliding
+    Whether or not the agent can slide on NavMesh collisions. -->
+    <arg name="allow_sliding"
+        default="false"/>
+        
+    <!-- bool createRenderer
+    Optimisation for non-visual simulation. If false, no renderer will be
+    created and no materials or textures loaded. -->
+    <arg name="create_renderer"
+        default="true"/>
+
+    <!-- int defaultAgentId
+    The default agent id used during initialization and functionally whenever
+    alternative agent ids are not provided. -->
+    <arg name="default_agent_id"
+        default="0"/>
+
+    <!-- bool enableGfxReplaySave
+    Enable the recording of render keyframes during simulation.
+    These keyframes can be used later to replay the graphics of a simulation. -->
+    <arg name="enable_gfx_replay_save"
+        default="false"/>
+
+    <!-- N/A in v0.2.4
+    Whether or not to enable horizon-based ambient occlusion,
+    which provides soft shadows in corners and crevices. -->
+    <arg name="enable_hbao"
+        default="false"/>
+
+    <!-- bool enablePhysics
+    This flags specifies whether or not dynamics is supported by the
+    simulation, if a suitable library (i.e. Bullet) has been installed. -->
+    <arg name="enable_physics"
+        default="false"/>
+
+    <!-- bool forceSeparateSemanticSceneGraph
+    Force creation of a separate semantic scene graph, even when no
+    semantic mesh is loaded for the stage. Required to support playback of any
+    replay that includes a semantic-only render asset instance. Set to false
+    otherwise. -->
+    <arg name="force_separate_semantic_scene_graph"
+        default="false"/>
+
+    <!-- bool frustumCulling
+    Enable or disable the frustum culling optimisation. -->
+    <arg name="frustum_culling"
+        default="true"/>
+
+    <!-- int gpuDeviceId
+    The system GPU device to use for rendering.
+    Value -1 means using the integrated GPU. Values >= 0 are for CUDA devices. -->
+    <arg name="gpu_device_id"
+        default="-1"/>
+
+    <!-- bool leaveContextWithBackgroundRenderer
+    Leave the context with the background thread after finishing draw
+    jobs. This will improve performance as transferring the OpenGL context back
+    and forth takes time but will require the user to manually transfer the
+    context back to the main thread before adding or removing objects. -->
+    <arg name="leave_context_with_background_renderer"
+        default="false"/>
+
+    <!-- bool loadSemanticMesh
+    Whether or not to load the semantic mesh. -->
+    <arg name="load_semantic_mesh"
+        default="true"/>
+
+    <!-- bool overrideSceneLightDefaults
+    Allows for overriding any scene lighting setup specified in a scene
+    instance file using scene_light_setup. -->
+    <arg name="override_scene_light_defaults"
+        default="false"/>
+
+    <!-- std::string sceneLightSetupKey
+    Light setup key for scene. -->
+    <arg name="scene_light_setup"
+        default="no_lights"/>
+
+    <!-- std::string physicsConfigFile
+    Path to the physics parameter config file. -->
+    <arg name="physics_config_file"
+        default="$(find habitat)/data/default.physics_config.json"/>
+
+    <!-- unsigned int randomSeed
+    The Simulator and Pathfinder random seed. Set during scene initialization. -->
+    <arg name="random_seed"
+        default="114514"/>
+
+    <!-- bool requiresTextures
+    Whether or not to load textures for the meshes. This MUST be true
+    for RGB rendering. -->
+    <arg name="requires_textures"
+        default="true"/>
+
+    <!-- std::string sceneDatasetConfigFile
+    File location for initial scene dataset to use. -->
+    <arg name="scene_dataset_config_file"
+        default="$(find habitat)/data/mp3d_example/17DRP5sb8fy/mp3d.scene-dataset-config.json"/>
+
+    <!-- std::string activeSceneName
+    Name of scene or stage config or asset to load. -->
+    <arg name="scene_id"
+        default="$(find habitat)/data/mp3d_example/17DRP5sb8fy/17DRP5sb8fy.glb"/>
+
+    <!-- bool useSemanticTexturesIfFound
+    Use texture-based semantics if the specified asset/dataset support them. -->
+    <arg name="use_semantic_textures"
+        default="true"/>
+
+<!-- SimulatorConfiguration end -->
+
+<!-- NavMeshSettings start -->
+
+    <!-- habitat_sim.nav.NavMeshSettings | habitat-sim/src/esp/nav/PathFinder.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.nav.NavMeshSettings.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/nav/PathFinder.h#L133
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/nav/PathFinder.h#L260 -->
+
+    <!-- float agentHeight
+    Minimum floor to 'ceiling' height that will still allow the floor
+    area to be considered unobstructed in world units.
+    Will be rounded up to a multiple of cellHeight. -->
+    <arg name="agent_height"
+        default="1.5"/>
+
+    <!-- float agentMaxClimb
+    Maximum ledge height that is considered to be traversable in world
+    units. For example, this constrains the maximum step height for traversing
+    stairways. Will be truncated to a multiple of cellHeight. -->
+    <arg name="agent_max_climb"
+        default="0.2"/>
+
+    <!-- float agentMaxSlope
+    The maximum slope that is considered walkable in degrees. -->
+    <arg name="agent_max_slope"
+        default="45.0"/>
+
+    <!-- float agentRadius
+    Agent radius in world units.
+    The distance to erode/shrink the walkable area of the heightfield away from
+    obstructions. Will be rounded up to a multiple of cellSize. -->
+    <arg name="agent_radius"
+        default="0.1"/>
+
+    <!-- float cellHeight
+    Y-axis cell height in world units. Voxel height. -->
+    <arg name="cell_height"
+        default="0.2"/>
+
+    <!-- float cellSize
+    XZ-plane cell size in world units. Size of square voxel sides in XZ. -->
+    <arg name="cell_size"
+        default="0.05"/>
+
+    <!-- float detailSampleDist
+    Detail sample distance in voxels.
+    Sets the sampling distance to use when generating the detail mesh. (For
+    height detail only.) [Limits: 0 or >= 0.9] [x cell_size] -->
+    <arg name="detail_sample_dist"
+        default="6.0"/>
+
+    <!-- float detailSampleMaxError
+    Detail sample max error in voxel heights.
+    The maximum distance the detail mesh surface should deviate from
+    heightfield data. (For height detail only.) [Limit: >=0] [x cell_height] -->
+    <arg name="detail_sample_max_error"
+        default="1.0"/>
+
+    <!-- float edgeMaxError
+    The maximum distance a simplfied contour's border edges should
+    deviate the original raw contour.
+    Good values are between 1.1-1.5 (1.3 usually yield good results). More
+    results in jaggies, less cuts corners. -->
+    <arg name="edge_max_error"
+        default="1.3"/>
+
+    <!-- float edgeMaxLen
+    Edge max length in world units.
+    The maximum allowed length for contour edges along the border of the mesh.
+    Extra vertices will be inserted as needed to keep contour edges below this
+    length. A value of zero effectively disables this feature.
+    A good value for edgeMaxLen is something like agentRadius*8. Will be rounded
+    to a multiple of cellSize. -->
+    <arg name="edge_max_len"
+        default="12.0"/>
+
+    <!-- bool filterLedgeSpans
+    Marks spans that are ledges as non-navigable.
+    This filter reduces the impact of the overestimation of conservative
+    voxelization so the resulting mesh will not have regions hanging in the air
+    over ledges. -->
+    <arg name="filter_ledge_spans"
+        default="true"/>
+
+    <!-- bool filterLowHangingObstacles
+    Marks navigable spans as non-navigable if the clearence above the
+    span is less than the specified height. -->
+    <arg name="filter_low_hanging_obstacles"
+        default="true"/>
+
+    <!-- bool filterWalkableLowHeightSpans
+    Marks navigable spans as non-navigable if the clearence above the
+    span is less than the specified height.
+    Allows the formation of navigable regions that will flow over low lying
+    objects such as curbs, and up structures such as stairways. -->
+    <arg name="filter_walkable_low_height_spans"
+        default="true"/>
+
+    <!-- float regionMergeSize
+    Region merge size in voxels.
+    regionMergeSize = sqrt(regionMergeArea) Any 2-D regions with a smaller span
+    (cell count) will, if possible, be merged with larger regions. -->
+    <arg name="region_merge_size"
+        default="20.0"/>
+
+    <!-- float regionMinSize
+    Region minimum size in voxels.
+    regionMinSize = sqrt(regionMinArea) The minimum number of cells allowed to
+    form isolated island areas. -->
+    <arg name="region_min_size"
+        default="20.0"/>
+
+    <!-- float vertsPerPoly
+    The maximum number of vertices allowed for polygons generated during
+    the contour to polygon conversion process. [Limit: >= 3] -->
+    <arg name="verts_per_poly"
+        default="6.0"/>
+
+<!-- NavMeshSettings stop -->
+
+<!-- AgentConfiguration 0 start -->
+
+    <arg name="odom_topic_agent_0"
+        default="/agent_0_visual_slam/odom"/>
+
+    <arg name="color_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/color/image_raw"/>
+
+    <arg name="depth_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/depth/image_raw"/>
+
+    <arg name="semantic_image_raw_topic_agent_0"
+        default="/agent_0_local_sensing/semantic/image_raw"/>
+
+    <arg name="depth_trunc_meters_agent_0"
+        default="4"/>
+
+    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
+
+    <arg name="body_type_agent_0"
+        default="cylinder"/>
+
+    <arg name="height_agent_0"
+        default="1"/>
+
+    <arg name="radius_agent_0"
+        default="0.25"/>
+
+    <arg name="forward_step_meter_agent_0"
+        default="0.2"/>
+
+    <arg name="lookup_step_degree_agent_0"
+        default="10"/>
+
+    <arg name="lookdown_step_degree_agent_0"
+        default="10"/>
+
+    <arg name="left_step_degree_agent_0"
+        default="10"/>
+
+    <arg name="right_step_degree_agent_0"
+        default="10"/>
+
+    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
+    Here we assume RGBD and semantics are aligned and have the same dimensions.
+    Sensor model is pinhole for all.
+
+    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
+    
+    <!-- relative to body frame, unit m or rad -->
+    <arg name="sensor_translation_x_agent_0"
+        default="0"/>
+
+    <arg name="sensor_translation_y_agent_0"
+        default="0"/>
+
+    <arg name="sensor_translation_z_agent_0"
+        default="0"/>
+
+    <arg name="sensor_rotation_x_agent_0"
+        default="0"/>
+
+    <arg name="sensor_rotation_y_agent_0"
+        default="0"/>
+
+    <arg name="sensor_rotation_z_agent_0"
+        default="0"/>
+
+    <!-- horizontal FOV in degrees -->
+    <arg name="hfov_agent_0"
+        default="90"/>
+
+    <arg name="image_width_agent_0"
+        default="640"/>
+
+    <arg name="image_height_agent_0"
+        default="480"/>
+
+    <!-- relative to world frame -->
+    <arg name="init_translation_x_agent_0"
+        default="0"/>
+
+    <arg name="init_translation_y_agent_0"
+        default="0"/>
+
+    <arg name="init_translation_z_agent_0"
+        default="0"/>
+
+    <arg name="init_quaternion_x_agent_0"
+        default="0"/>
+
+    <arg name="init_quaternion_y_agent_0"
+        default="0"/>
+
+    <arg name="init_quaternion_z_agent_0"
+        default="0"/>
+
+    <arg name="init_quaternion_w_agent_0"
+        default="1"/>
+
+<!-- AgentConfiguration 0 stop -->
+
+<!-- AgentConfiguration 1 start -->
+
+    <arg name="odom_topic_agent_1"
+        default="/agent_1_visual_slam/odom"/>
+
+    <arg name="color_image_raw_topic_agent_1"
+        default="/agent_1_local_sensing/color/image_raw"/>
+
+    <arg name="depth_image_raw_topic_agent_1"
+        default="/agent_1_local_sensing/depth/image_raw"/>
+
+    <arg name="semantic_image_raw_topic_agent_1"
+        default="/agent_1_local_sensing/semantic/image_raw"/>
+
+    <arg name="depth_trunc_meters_agent_1"
+        default="4"/>
+
+    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
+
+    <arg name="body_type_agent_1"
+        default="cylinder"/>
+
+    <arg name="height_agent_1"
+        default="1"/>
+
+    <arg name="radius_agent_1"
+        default="0.25"/>
+
+    <arg name="forward_step_meter_agent_1"
+        default="0.2"/>
+
+    <arg name="lookup_step_degree_agent_1"
+        default="10"/>
+
+    <arg name="lookdown_step_degree_agent_1"
+        default="10"/>
+
+    <arg name="left_step_degree_agent_1"
+        default="10"/>
+
+    <arg name="right_step_degree_agent_1"
+        default="10"/>
+
+    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
+    Here we assume RGBD and semantics are aligned and have the same dimensions.
+    Sensor model is pinhole for all.
+
+    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
+    
+    <!-- relative to body frame, unit m or rad -->
+    <arg name="sensor_translation_x_agent_1"
+        default="0"/>
+
+    <arg name="sensor_translation_y_agent_1"
+        default="0"/>
+
+    <arg name="sensor_translation_z_agent_1"
+        default="0"/>
+
+    <arg name="sensor_rotation_x_agent_1"
+        default="0"/>
+
+    <arg name="sensor_rotation_y_agent_1"
+        default="0"/>
+
+    <arg name="sensor_rotation_z_agent_1"
+        default="0"/>
+
+    <!-- horizontal FOV in degrees -->
+    <arg name="hfov_agent_1"
+        default="90"/>
+
+    <arg name="image_width_agent_1"
+        default="640"/>
+
+    <arg name="image_height_agent_1"
+        default="480"/>
+
+    <!-- relative to world frame -->
+    <arg name="init_translation_x_agent_1"
+        default="0"/>
+
+    <arg name="init_translation_y_agent_1"
+        default="0"/>
+
+    <arg name="init_translation_z_agent_1"
+        default="0"/>
+
+    <arg name="init_quaternion_x_agent_1"
+        default="0"/>
+
+    <arg name="init_quaternion_y_agent_1"
+        default="0"/>
+
+    <arg name="init_quaternion_z_agent_1"
+        default="0"/>
+
+    <arg name="init_quaternion_w_agent_1"
+        default="1"/>
+
+<!-- AgentConfiguration 1 stop -->
+
+<!-- AgentConfiguration 2 start -->
+
+    <arg name="odom_topic_agent_2"
+        default="/agent_2_visual_slam/odom"/>
+
+    <arg name="color_image_raw_topic_agent_2"
+        default="/agent_2_local_sensing/color/image_raw"/>
+
+    <arg name="depth_image_raw_topic_agent_2"
+        default="/agent_2_local_sensing/depth/image_raw"/>
+
+    <arg name="semantic_image_raw_topic_agent_2"
+        default="/agent_2_local_sensing/semantic/image_raw"/>
+
+    <arg name="depth_trunc_meters_agent_2"
+        default="4"/>
+
+    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
+
+    <arg name="body_type_agent_2"
+        default="cylinder"/>
+
+    <arg name="height_agent_2"
+        default="1"/>
+
+    <arg name="radius_agent_2"
+        default="0.25"/>
+
+    <arg name="forward_step_meter_agent_2"
+        default="0.2"/>
+
+    <arg name="lookup_step_degree_agent_2"
+        default="10"/>
+
+    <arg name="lookdown_step_degree_agent_2"
+        default="10"/>
+
+    <arg name="left_step_degree_agent_2"
+        default="10"/>
+
+    <arg name="right_step_degree_agent_2"
+        default="10"/>
+
+    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
+    Here we assume RGBD and semantics are aligned and have the same dimensions.
+    Sensor model is pinhole for all.
+
+    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
+    
+    <!-- relative to body frame, unit m or rad -->
+    <arg name="sensor_translation_x_agent_2"
+        default="0"/>
+
+    <arg name="sensor_translation_y_agent_2"
+        default="0"/>
+
+    <arg name="sensor_translation_z_agent_2"
+        default="0"/>
+
+    <arg name="sensor_rotation_x_agent_2"
+        default="0"/>
+
+    <arg name="sensor_rotation_y_agent_2"
+        default="0"/>
+
+    <arg name="sensor_rotation_z_agent_2"
+        default="0"/>
+
+    <!-- horizontal FOV in degrees -->
+    <arg name="hfov_agent_2"
+        default="90"/>
+
+    <arg name="image_width_agent_2"
+        default="640"/>
+
+    <arg name="image_height_agent_2"
+        default="480"/>
+
+    <!-- relative to world frame -->
+    <arg name="init_translation_x_agent_2"
+        default="0"/>
+
+    <arg name="init_translation_y_agent_2"
+        default="0"/>
+
+    <arg name="init_translation_z_agent_2"
+        default="0"/>
+
+    <arg name="init_quaternion_x_agent_2"
+        default="0"/>
+
+    <arg name="init_quaternion_y_agent_2"
+        default="0"/>
+
+    <arg name="init_quaternion_z_agent_2"
+        default="0"/>
+
+    <arg name="init_quaternion_w_agent_2"
+        default="1"/>
+
+<!-- AgentConfiguration 2 stop -->
+
+<!-- AgentConfiguration 3 start -->
+
+    <arg name="odom_topic_agent_3"
+        default="/agent_3_visual_slam/odom"/>
+
+    <arg name="color_image_raw_topic_agent_3"
+        default="/agent_3_local_sensing/color/image_raw"/>
+
+    <arg name="depth_image_raw_topic_agent_3"
+        default="/agent_3_local_sensing/depth/image_raw"/>
+
+    <arg name="semantic_image_raw_topic_agent_3"
+        default="/agent_3_local_sensing/semantic/image_raw"/>
+
+    <arg name="depth_trunc_meters_agent_3"
+        default="4"/>
+
+    <!-- habitat_sim.agent.AgentConfiguration class | habitat-sim/src/esp/agent/Agent.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.agent.AgentConfiguration.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56
+    default val: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/agent/Agent.h#L56 -->
+
+    <arg name="body_type_agent_3"
+        default="cylinder"/>
+
+    <arg name="height_agent_3"
+        default="1"/>
+
+    <arg name="radius_agent_3"
+        default="0.25"/>
+
+    <arg name="forward_step_meter_agent_3"
+        default="0.2"/>
+
+    <arg name="lookup_step_degree_agent_3"
+        default="10"/>
+
+    <arg name="lookdown_step_degree_agent_3"
+        default="10"/>
+
+    <arg name="left_step_degree_agent_3"
+        default="10"/>
+
+    <arg name="right_step_degree_agent_3"
+        default="10"/>
+
+    <!-- habitat_sim.sensor.SensorSpec class | habitat-sim/src/esp/sensor/Sensor.h
+    latest docs: https://aihabitat.org/docs/habitat-sim/habitat_sim.sensor.SensorSpec.html
+    v0.2.4 code: https://github.com/facebookresearch/habitat-sim/blob/f179b584bcd713c5a2a998132211e2cae881d6d1/src/esp/sensor/Sensor.h#L57
+    Here we assume RGBD and semantics are aligned and have the same dimensions.
+    Sensor model is pinhole for all.
+
+    Coordinate frame in habitat: https://aihabitat.org/docs/habitat-sim/coordinate-frame-tutorial.html
+    Habitat body frame: XYZ-RUB.
+    
+    But here we use: world frame XYZ-NWU, body frame XYZ-FLU
+    which is the convention adopted in EGO planner. -->
+    
+    <!-- relative to body frame, unit m or rad -->
+    <arg name="sensor_translation_x_agent_3"
+        default="0"/>
+
+    <arg name="sensor_translation_y_agent_3"
+        default="0"/>
+
+    <arg name="sensor_translation_z_agent_3"
+        default="0"/>
+
+    <arg name="sensor_rotation_x_agent_3"
+        default="0"/>
+
+    <arg name="sensor_rotation_y_agent_3"
+        default="0"/>
+
+    <arg name="sensor_rotation_z_agent_3"
+        default="0"/>
+
+    <!-- horizontal FOV in degrees -->
+    <arg name="hfov_agent_3"
+        default="90"/>
+
+    <arg name="image_width_agent_3"
+        default="640"/>
+
+    <arg name="image_height_agent_3"
+        default="480"/>
+
+    <!-- relative to world frame -->
+    <arg name="init_translation_x_agent_3"
+        default="0"/>
+
+    <arg name="init_translation_y_agent_3"
+        default="0"/>
+
+    <arg name="init_translation_z_agent_3"
+        default="0"/>
+
+    <arg name="init_quaternion_x_agent_3"
+        default="0"/>
+
+    <arg name="init_quaternion_y_agent_3"
+        default="0"/>
+
+    <arg name="init_quaternion_z_agent_3"
+        default="0"/>
+
+    <arg name="init_quaternion_w_agent_3"
+        default="1"/>
+
+<!-- AgentConfiguration 3 stop -->
+
+<!-- node habitat simulator start -->
+
+    <node pkg="habitat" name="habitat_simulator" type="simulator.py" output="screen">
+
+        <param name="render_fps"                                type="int"      value="$(arg render_fps)"/>
+
+    <!-- Global point cloud -->
+        <param name="mesh_sampling_point"                       type="int"      value="$(arg mesh_sampling_point)"/>
+        <param name="global_pcd_downsample_voxel_size"          type="double"   value="$(arg global_pcd_downsample_voxel_size)"/>
+        <param name="global_pcd_publish_topic"                  type="str"      value="$(arg global_pcd_publish_topic)"/>
+        <param name="global_pcd_reference_frame"                type="str"      value="$(arg global_pcd_reference_frame)"/>
+        <param name="offset_z"                                  type="double"   value="$(arg offset_z)"/>
+
+    <!-- SimulatorConfiguration -->
+        <param name="allow_sliding"                             type="bool"     value="$(arg allow_sliding)"/>
+        <param name="create_renderer"                           type="bool"     value="$(arg create_renderer)"/>
+        <param name="default_agent_id"                          type="int"      value="$(arg default_agent_id)"/>
+        <param name="enable_gfx_replay_save"                    type="bool"     value="$(arg enable_gfx_replay_save)"/>
+        <param name="enable_hbao"                               type="bool"     value="$(arg enable_hbao)"/>
+        <param name="enable_physics"                            type="bool"     value="$(arg enable_physics)"/>
+        <param name="force_separate_semantic_scene_graph"       type="bool"     value="$(arg force_separate_semantic_scene_graph)"/>
+        <param name="frustum_culling"                           type="bool"     value="$(arg frustum_culling)"/>
+        <param name="gpu_device_id"                             type="int"      value="$(arg gpu_device_id)"/>
+        <param name="leave_context_with_background_renderer"    type="bool"     value="$(arg leave_context_with_background_renderer)"/>
+        <param name="load_semantic_mesh"                        type="bool"     value="$(arg load_semantic_mesh)"/>
+        <param name="override_scene_light_defaults"             type="bool"     value="$(arg override_scene_light_defaults)"/>
+        <param name="scene_light_setup"                         type="str"      value="$(arg scene_light_setup)"/>
+        <param name="physics_config_file"                       type="str"      value="$(arg physics_config_file)"/>
+        <param name="random_seed"                               type="int"      value="$(arg random_seed)"/>
+        <param name="requires_textures"                         type="bool"     value="$(arg requires_textures)"/>
+        <param name="scene_dataset_config_file"                 type="str"      value="$(arg scene_dataset_config_file)"/>
+        <param name="scene_id"                                  type="str"      value="$(arg scene_id)"/>
+        <param name="use_semantic_textures"                     type="bool"     value="$(arg use_semantic_textures)"/>
+        
+    <!-- NavMeshSettings -->
+        <param name="agent_height"                              type="double"   value="$(arg agent_height)"/>
+        <param name="agent_max_climb"                           type="double"   value="$(arg agent_max_climb)"/>
+        <param name="agent_max_slope"                           type="double"   value="$(arg agent_max_slope)"/>
+        <param name="agent_radius"                              type="double"   value="$(arg agent_radius)"/>
+        <param name="cell_height"                               type="double"   value="$(arg cell_height)"/>
+        <param name="cell_size"                                 type="double"   value="$(arg cell_size)"/>
+        <param name="detail_sample_dist"                        type="double"   value="$(arg detail_sample_dist)"/>
+        <param name="detail_sample_max_error"                   type="double"   value="$(arg detail_sample_max_error)"/>
+        <param name="edge_max_error"                            type="double"   value="$(arg edge_max_error)"/>
+        <param name="edge_max_len"                              type="double"   value="$(arg edge_max_len)"/>
+        <param name="filter_ledge_spans"                        type="bool"     value="$(arg filter_ledge_spans)"/>
+        <param name="filter_low_hanging_obstacles"              type="bool"     value="$(arg filter_low_hanging_obstacles)"/>
+        <param name="filter_walkable_low_height_spans"          type="bool"     value="$(arg filter_walkable_low_height_spans)"/>
+        <param name="region_merge_size"                         type="double"   value="$(arg region_merge_size)"/>
+        <param name="region_min_size"                           type="double"   value="$(arg region_min_size)"/>
+        <param name="verts_per_poly"                            type="double"   value="$(arg verts_per_poly)"/>
+
+    <!-- agent count -->
+        <param name="agent_count"                               type="int"      value="4"/>
+
+    <!-- AgentConfiguration 0 -->
+        <param name="odom_topic_agent_0"                        type="str"      value="$(arg odom_topic_agent_0)"/>
+        <param name="color_image_raw_topic_agent_0"             type="str"      value="$(arg color_image_raw_topic_agent_0)"/>
+        <param name="depth_image_raw_topic_agent_0"             type="str"      value="$(arg depth_image_raw_topic_agent_0)"/>
+        <param name="semantic_image_raw_topic_agent_0"          type="str"      value="$(arg semantic_image_raw_topic_agent_0)"/>
+        <param name="depth_trunc_meters_agent_0"                type="double"   value="$(arg depth_trunc_meters_agent_0)"/>
+
+        <param name="body_type_agent_0"                         type="str"      value="$(arg body_type_agent_0)"/>
+        <param name="height_agent_0"                            type="double"   value="$(arg height_agent_0)"/>
+        <param name="radius_agent_0"                            type="double"   value="$(arg radius_agent_0)"/>
+        <param name="forward_step_meter_agent_0"                type="double"   value="$(arg forward_step_meter_agent_0)"/>
+        <param name="lookup_step_degree_agent_0"                type="double"   value="$(arg lookup_step_degree_agent_0)"/>
+        <param name="lookdown_step_degree_agent_0"              type="double"   value="$(arg lookdown_step_degree_agent_0)"/>
+        <param name="left_step_degree_agent_0"                  type="double"   value="$(arg left_step_degree_agent_0)"/>
+        <param name="right_step_degree_agent_0"                 type="double"   value="$(arg right_step_degree_agent_0)"/>
+        <param name="sensor_translation_x_agent_0"              type="double"   value="$(arg sensor_translation_x_agent_0)"/>
+        <param name="sensor_translation_y_agent_0"              type="double"   value="$(arg sensor_translation_y_agent_0)"/>
+        <param name="sensor_translation_z_agent_0"              type="double"   value="$(arg sensor_translation_z_agent_0)"/>
+        <param name="sensor_rotation_x_agent_0"                 type="double"   value="$(arg sensor_rotation_x_agent_0)"/>
+        <param name="sensor_rotation_y_agent_0"                 type="double"   value="$(arg sensor_rotation_y_agent_0)"/>
+        <param name="sensor_rotation_z_agent_0"                 type="double"   value="$(arg sensor_rotation_z_agent_0)"/>
+        <param name="hfov_agent_0"                              type="double"   value="$(arg hfov_agent_0)"/>
+        <param name="image_width_agent_0"                       type="double"   value="$(arg image_width_agent_0)"/>
+        <param name="image_height_agent_0"                      type="double"   value="$(arg image_height_agent_0)"/>
+        <param name="init_translation_x_agent_0"                type="double"   value="$(arg init_translation_x_agent_0)"/>
+        <param name="init_translation_y_agent_0"                type="double"   value="$(arg init_translation_y_agent_0)"/>
+        <param name="init_translation_z_agent_0"                type="double"   value="$(arg init_translation_z_agent_0)"/>
+        <param name="init_quaternion_x_agent_0"                 type="double"   value="$(arg init_quaternion_x_agent_0)"/>
+        <param name="init_quaternion_y_agent_0"                 type="double"   value="$(arg init_quaternion_y_agent_0)"/>
+        <param name="init_quaternion_z_agent_0"                 type="double"   value="$(arg init_quaternion_z_agent_0)"/>
+        <param name="init_quaternion_w_agent_0"                 type="double"   value="$(arg init_quaternion_w_agent_0)"/>
+
+    <!-- AgentConfiguration 1 -->
+        <param name="odom_topic_agent_1"                        type="str"      value="$(arg odom_topic_agent_1)"/>
+        <param name="color_image_raw_topic_agent_1"             type="str"      value="$(arg color_image_raw_topic_agent_1)"/>
+        <param name="depth_image_raw_topic_agent_1"             type="str"      value="$(arg depth_image_raw_topic_agent_1)"/>
+        <param name="semantic_image_raw_topic_agent_1"          type="str"      value="$(arg semantic_image_raw_topic_agent_1)"/>
+        <param name="depth_trunc_meters_agent_1"                type="double"   value="$(arg depth_trunc_meters_agent_1)"/>
+
+        <param name="body_type_agent_1"                         type="str"      value="$(arg body_type_agent_1)"/>
+        <param name="height_agent_1"                            type="double"   value="$(arg height_agent_1)"/>
+        <param name="radius_agent_1"                            type="double"   value="$(arg radius_agent_1)"/>
+        <param name="forward_step_meter_agent_1"                type="double"   value="$(arg forward_step_meter_agent_1)"/>
+        <param name="lookup_step_degree_agent_1"                type="double"   value="$(arg lookup_step_degree_agent_1)"/>
+        <param name="lookdown_step_degree_agent_1"              type="double"   value="$(arg lookdown_step_degree_agent_1)"/>
+        <param name="left_step_degree_agent_1"                  type="double"   value="$(arg left_step_degree_agent_1)"/>
+        <param name="right_step_degree_agent_1"                 type="double"   value="$(arg right_step_degree_agent_1)"/>
+        <param name="sensor_translation_x_agent_1"              type="double"   value="$(arg sensor_translation_x_agent_1)"/>
+        <param name="sensor_translation_y_agent_1"              type="double"   value="$(arg sensor_translation_y_agent_1)"/>
+        <param name="sensor_translation_z_agent_1"              type="double"   value="$(arg sensor_translation_z_agent_1)"/>
+        <param name="sensor_rotation_x_agent_1"                 type="double"   value="$(arg sensor_rotation_x_agent_1)"/>
+        <param name="sensor_rotation_y_agent_1"                 type="double"   value="$(arg sensor_rotation_y_agent_1)"/>
+        <param name="sensor_rotation_z_agent_1"                 type="double"   value="$(arg sensor_rotation_z_agent_1)"/>
+        <param name="hfov_agent_1"                              type="double"   value="$(arg hfov_agent_1)"/>
+        <param name="image_width_agent_1"                       type="double"   value="$(arg image_width_agent_1)"/>
+        <param name="image_height_agent_1"                      type="double"   value="$(arg image_height_agent_1)"/>
+        <param name="init_translation_x_agent_1"                type="double"   value="$(arg init_translation_x_agent_1)"/>
+        <param name="init_translation_y_agent_1"                type="double"   value="$(arg init_translation_y_agent_1)"/>
+        <param name="init_translation_z_agent_1"                type="double"   value="$(arg init_translation_z_agent_1)"/>
+        <param name="init_quaternion_x_agent_1"                 type="double"   value="$(arg init_quaternion_x_agent_1)"/>
+        <param name="init_quaternion_y_agent_1"                 type="double"   value="$(arg init_quaternion_y_agent_1)"/>
+        <param name="init_quaternion_z_agent_1"                 type="double"   value="$(arg init_quaternion_z_agent_1)"/>
+        <param name="init_quaternion_w_agent_1"                 type="double"   value="$(arg init_quaternion_w_agent_1)"/>
+
+    <!-- AgentConfiguration 2 -->
+        <param name="odom_topic_agent_2"                        type="str"      value="$(arg odom_topic_agent_2)"/>
+        <param name="color_image_raw_topic_agent_2"             type="str"      value="$(arg color_image_raw_topic_agent_2)"/>
+        <param name="depth_image_raw_topic_agent_2"             type="str"      value="$(arg depth_image_raw_topic_agent_2)"/>
+        <param name="semantic_image_raw_topic_agent_2"          type="str"      value="$(arg semantic_image_raw_topic_agent_2)"/>
+        <param name="depth_trunc_meters_agent_2"                type="double"   value="$(arg depth_trunc_meters_agent_2)"/>
+
+        <param name="body_type_agent_2"                         type="str"      value="$(arg body_type_agent_2)"/>
+        <param name="height_agent_2"                            type="double"   value="$(arg height_agent_2)"/>
+        <param name="radius_agent_2"                            type="double"   value="$(arg radius_agent_2)"/>
+        <param name="forward_step_meter_agent_2"                type="double"   value="$(arg forward_step_meter_agent_2)"/>
+        <param name="lookup_step_degree_agent_2"                type="double"   value="$(arg lookup_step_degree_agent_2)"/>
+        <param name="lookdown_step_degree_agent_2"              type="double"   value="$(arg lookdown_step_degree_agent_2)"/>
+        <param name="left_step_degree_agent_2"                  type="double"   value="$(arg left_step_degree_agent_2)"/>
+        <param name="right_step_degree_agent_2"                 type="double"   value="$(arg right_step_degree_agent_2)"/>
+        <param name="sensor_translation_x_agent_2"              type="double"   value="$(arg sensor_translation_x_agent_2)"/>
+        <param name="sensor_translation_y_agent_2"              type="double"   value="$(arg sensor_translation_y_agent_2)"/>
+        <param name="sensor_translation_z_agent_2"              type="double"   value="$(arg sensor_translation_z_agent_2)"/>
+        <param name="sensor_rotation_x_agent_2"                 type="double"   value="$(arg sensor_rotation_x_agent_2)"/>
+        <param name="sensor_rotation_y_agent_2"                 type="double"   value="$(arg sensor_rotation_y_agent_2)"/>
+        <param name="sensor_rotation_z_agent_2"                 type="double"   value="$(arg sensor_rotation_z_agent_2)"/>
+        <param name="hfov_agent_2"                              type="double"   value="$(arg hfov_agent_2)"/>
+        <param name="image_width_agent_2"                       type="double"   value="$(arg image_width_agent_2)"/>
+        <param name="image_height_agent_2"                      type="double"   value="$(arg image_height_agent_2)"/>
+        <param name="init_translation_x_agent_2"                type="double"   value="$(arg init_translation_x_agent_2)"/>
+        <param name="init_translation_y_agent_2"                type="double"   value="$(arg init_translation_y_agent_2)"/>
+        <param name="init_translation_z_agent_2"                type="double"   value="$(arg init_translation_z_agent_2)"/>
+        <param name="init_quaternion_x_agent_2"                 type="double"   value="$(arg init_quaternion_x_agent_2)"/>
+        <param name="init_quaternion_y_agent_2"                 type="double"   value="$(arg init_quaternion_y_agent_2)"/>
+        <param name="init_quaternion_z_agent_2"                 type="double"   value="$(arg init_quaternion_z_agent_2)"/>
+        <param name="init_quaternion_w_agent_2"                 type="double"   value="$(arg init_quaternion_w_agent_2)"/>
+
+    <!-- AgentConfiguration 3 -->
+        <param name="odom_topic_agent_3"                        type="str"      value="$(arg odom_topic_agent_3)"/>
+        <param name="color_image_raw_topic_agent_3"             type="str"      value="$(arg color_image_raw_topic_agent_3)"/>
+        <param name="depth_image_raw_topic_agent_3"             type="str"      value="$(arg depth_image_raw_topic_agent_3)"/>
+        <param name="semantic_image_raw_topic_agent_3"          type="str"      value="$(arg semantic_image_raw_topic_agent_3)"/>
+        <param name="depth_trunc_meters_agent_3"                type="double"   value="$(arg depth_trunc_meters_agent_3)"/>
+
+        <param name="body_type_agent_3"                         type="str"      value="$(arg body_type_agent_3)"/>
+        <param name="height_agent_3"                            type="double"   value="$(arg height_agent_3)"/>
+        <param name="radius_agent_3"                            type="double"   value="$(arg radius_agent_3)"/>
+        <param name="forward_step_meter_agent_3"                type="double"   value="$(arg forward_step_meter_agent_3)"/>
+        <param name="lookup_step_degree_agent_3"                type="double"   value="$(arg lookup_step_degree_agent_3)"/>
+        <param name="lookdown_step_degree_agent_3"              type="double"   value="$(arg lookdown_step_degree_agent_3)"/>
+        <param name="left_step_degree_agent_3"                  type="double"   value="$(arg left_step_degree_agent_3)"/>
+        <param name="right_step_degree_agent_3"                 type="double"   value="$(arg right_step_degree_agent_3)"/>
+        <param name="sensor_translation_x_agent_3"              type="double"   value="$(arg sensor_translation_x_agent_3)"/>
+        <param name="sensor_translation_y_agent_3"              type="double"   value="$(arg sensor_translation_y_agent_3)"/>
+        <param name="sensor_translation_z_agent_3"              type="double"   value="$(arg sensor_translation_z_agent_3)"/>
+        <param name="sensor_rotation_x_agent_3"                 type="double"   value="$(arg sensor_rotation_x_agent_3)"/>
+        <param name="sensor_rotation_y_agent_3"                 type="double"   value="$(arg sensor_rotation_y_agent_3)"/>
+        <param name="sensor_rotation_z_agent_3"                 type="double"   value="$(arg sensor_rotation_z_agent_3)"/>
+        <param name="hfov_agent_3"                              type="double"   value="$(arg hfov_agent_3)"/>
+        <param name="image_width_agent_3"                       type="double"   value="$(arg image_width_agent_3)"/>
+        <param name="image_height_agent_3"                      type="double"   value="$(arg image_height_agent_3)"/>
+        <param name="init_translation_x_agent_3"                type="double"   value="$(arg init_translation_x_agent_3)"/>
+        <param name="init_translation_y_agent_3"                type="double"   value="$(arg init_translation_y_agent_3)"/>
+        <param name="init_translation_z_agent_3"                type="double"   value="$(arg init_translation_z_agent_3)"/>
+        <param name="init_quaternion_x_agent_3"                 type="double"   value="$(arg init_quaternion_x_agent_3)"/>
+        <param name="init_quaternion_y_agent_3"                 type="double"   value="$(arg init_quaternion_y_agent_3)"/>
+        <param name="init_quaternion_z_agent_3"                 type="double"   value="$(arg init_quaternion_z_agent_3)"/>
+        <param name="init_quaternion_w_agent_3"                 type="double"   value="$(arg init_quaternion_w_agent_3)"/>
+
+    </node>
+
+<!-- node habitat simulator stop -->
+
+</launch>
