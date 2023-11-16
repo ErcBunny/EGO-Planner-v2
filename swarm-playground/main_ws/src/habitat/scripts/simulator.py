@@ -12,6 +12,7 @@ import numpy as np
 import open3d as o3d
 import habitat_sim
 from habitat_sim.simulator import ObservationDict
+from habitat_sim.utils.common import quat_to_coeffs
 from scipy.spatial.transform import Rotation
 
 
@@ -88,6 +89,7 @@ class SyncSimulator:
     global_pcd_reference_frame: str
 
     agents: list[habitat_sim.Agent]
+    agent_init_heights: list[float]
     depth_trunc_meters: list[float]
     o3d_camera_intrinsics: list[o3d.camera.PinholeCameraIntrinsic]
     odom_handles: list[OdomHandle]
@@ -124,18 +126,19 @@ class SyncSimulator:
 
         self.global_point_cloud_pub.publish(msg)
 
-    # TODO: test it
     def get_pcd_transform(
         self, sensor_pose_habitat: habitat_sim.agent.SixDOFPose
     ) -> np.ndarray:
-        rotation_world2cam_habitat = sensor_pose_habitat.rotation
+        rotation_world2cam_habitat = Rotation.from_quat(
+            quat_to_coeffs(sensor_pose_habitat.rotation)
+        )
         translation_world2cam_habitat = sensor_pose_habitat.position
 
         rotation_worldframe_mesh2habitat = Rotation.from_matrix(
-            [1, 0, 0], [0, 0, -1], [0, 1, 0]
+            [[1, 0, 0], [0, 0, -1], [0, 1, 0]]
         )
         rotation_camframe_habitat2mesh = Rotation.from_matrix(
-            [1, 0, 0], [0, -1, 0], [0, 0, -1]
+            [[1, 0, 0], [0, -1, 0], [0, 0, -1]]
         )
 
         # need to calculate
@@ -146,8 +149,8 @@ class SyncSimulator:
             * rotation_camframe_habitat2mesh
         )
 
-        translation_world2cam_mesh: np.ndarray = (
-            rotation_worldframe_mesh2habitat * translation_world2cam_habitat
+        translation_world2cam_mesh = rotation_worldframe_mesh2habitat.apply(
+            translation_world2cam_habitat
         )
 
         pcd_transform = np.zeros([4, 4])
@@ -162,8 +165,6 @@ class SyncSimulator:
 
         while not rospy.is_shutdown():
             # set agent states according to odom poses
-            # and get updated sensor states TODO
-            sensor_states = []
             for i in range(self.agent_count):
                 agent_state = habitat_sim.AgentState()
                 agent_state.position, agent_state.rotation = self.odom_handles[
@@ -191,31 +192,18 @@ class SyncSimulator:
             rate.sleep()
 
     def post_proc_publish(self, agent_id: int, agent_obs: ObservationDict):
-        # note down the current time and create the common header
-        timestamp = rospy.Time.now()
-        common_header = std_msgs.msg.Header()
-        common_header.stamp = timestamp
-
         # process color image
         # can also use `rgba.astype(np.uint8), encoding="rgba8"` at the cost of higher bandwidth
         rgba = agent_obs["color_sensor" + "_agent_" + str(agent_id)]
         rgb = cv2.cvtColor(rgba, cv2.COLOR_RGBA2RGB)
-        rgb_msg = CvBridge().cv2_to_imgmsg(rgb.astype(np.uint8), encoding="rgb8")
-        rgb_msg.header = common_header
+        o3d_color = o3d.geometry.Image(rgb)
 
         # process depth image
-        # habitat renders depth in meters, the depth array is first truncated
-        # rounded to the nearest int, then scaled into millimeters (*1000)
-        d = agent_obs["depth_sensor" + "_agent_" + str(agent_id)]
-        d = np.rint(d.clip(0.0, self.depth_trunc_meters[agent_id]) * 1000)
-        d_msg = CvBridge().cv2_to_imgmsg(d.astype(np.uint16), encoding="16UC1")
-        d_msg.header = common_header
-
-        # TODO: semantics
-
-        # process point cloud with rgb, need to transform it into the world frame
-        o3d_color = o3d.geometry.Image(rgb)
-        o3d_depth = o3d.geometry.Image(d)
+        # habitat renders depth in meters
+        # depth values will first be truncated using open3d
+        # then scaled using numpy
+        depth = agent_obs["depth_sensor" + "_agent_" + str(agent_id)]
+        o3d_depth = o3d.geometry.Image(depth)
         o3d_rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
             color=o3d_color,
             depth=o3d_depth,
@@ -223,13 +211,61 @@ class SyncSimulator:
             depth_trunc=self.depth_trunc_meters[agent_id],
             convert_rgb_to_intensity=False,
         )
+        d = np.rint(np.asarray(o3d_rgbd.depth) * 1000)
+
+        # process local point cloud, need to transform it into the world frame
+        # also do vertical filtering and in-filling according to ground and agent height
+        sensor_pose = (
+            self.agents[agent_id]
+            .get_state()
+            .sensor_states["color_sensor" + "_agent_" + str(agent_id)]
+        )
         o3d_pcd = o3d.geometry.PointCloud.create_from_rgbd_image(
             image=o3d_rgbd, intrinsic=self.o3d_camera_intrinsics[agent_id]
+        ).transform(self.get_pcd_transform(sensor_pose))
+        o3d_pcd_points = np.asarray(o3d_pcd.points)
+        z_min = self.agent_init_heights[agent_id] + 0.05
+        z_max = (
+            self.agent_init_heights[agent_id]
+            + self.agents[agent_id].agent_config.height + 0.05
         )
+        o3d_pcd_points = o3d_pcd_points[
+            (o3d_pcd_points[:, 2] >= z_min) & (o3d_pcd_points[:, 2] <= z_max)
+        ]
+        o3d_pcd_points[:, 2] = self.agent_init_heights[agent_id]
 
-        # publish messages
+        # TODO: semantics
+
+        # create and publish messages
+        timestamp = rospy.Time.now()
+        common_header = std_msgs.msg.Header()
+        common_header.stamp = timestamp
+
+        rgb_msg = CvBridge().cv2_to_imgmsg(rgb.astype(np.uint8), encoding="rgb8")
+        rgb_msg.header = common_header
+
+        d_msg = CvBridge().cv2_to_imgmsg(d.astype(np.uint16), encoding="16UC1")
+        d_msg.header = common_header
+
+        pcd_msg = PointCloud2()
+        pcd_msg.height = 1
+        pcd_msg.width = len(o3d_pcd_points)
+        pcd_msg.fields = [
+            PointField("x", 0, PointField.FLOAT32, 1),
+            PointField("y", 4, PointField.FLOAT32, 1),
+            PointField("z", 8, PointField.FLOAT32, 1),
+        ]
+        pcd_msg.is_bigendian = False
+        pcd_msg.is_dense = True
+        pcd_msg.point_step = 12
+        pcd_msg.row_step = pcd_msg.point_step * pcd_msg.width
+        pcd_msg.data = np.asarray(o3d_pcd_points, np.float32).tobytes()
+        pcd_msg.header = common_header
+        pcd_msg.header.frame_id = self.global_pcd_reference_frame
+
         self.color_image_raw_pubs[agent_id].publish(rgb_msg)
         self.depth_image_raw_pubs[agent_id].publish(d_msg)
+        self.local_point_cloud_pubs[agent_id].publish(pcd_msg)
 
     def __init__(self) -> None:
         # spawn simulator
@@ -381,8 +417,12 @@ class SyncSimulator:
 
         # init agents, no need to set initial poses as poses come from odom
         self.agents = []
+        self.agent_init_heights = []
         for i in range(self.agent_count):
             self.agents.append(self.simulator.initialize_agent(i))
+            self.agent_init_heights.append(
+                rospy.get_param("~init_translation_z" + "_agent_" + str(i))
+            )
 
         # o3d read mesh and sample points from it as the global point cloud
         scene_mesh = o3d.io.read_triangle_mesh(rospy.get_param("~scene_id"))
@@ -393,6 +433,10 @@ class SyncSimulator:
             voxel_size=rospy.get_param("~global_pcd_downsample_voxel_size")
         ).translate((0, 0, rospy.get_param("~offset_z")))
         self.global_point_cloud_points = np.asarray(pcd_down.points)
+        rospy.loginfo(
+            "Created a global point cloud with %d points.",
+            self.global_point_cloud_points.shape[0],
+        )
 
         # also need to get depth truncation settings and camera matrix
         # for post processing
@@ -447,6 +491,13 @@ class SyncSimulator:
                 rospy.Publisher(
                     rospy.get_param("~semantic_image_raw_topic" + "_agent_" + str(i)),
                     Image,
+                    queue_size=1,
+                )
+            )
+            self.local_point_cloud_pubs.append(
+                rospy.Publisher(
+                    rospy.get_param("~local_pcd_topic" + "_agent_" + str(i)),
+                    PointCloud2,
                     queue_size=1,
                 )
             )

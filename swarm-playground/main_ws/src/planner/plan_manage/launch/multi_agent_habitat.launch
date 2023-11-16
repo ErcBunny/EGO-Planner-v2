@@ -20,10 +20,20 @@
         <arg name="sensor_translation_z_agent_2" value="1.5"/>
         <arg name="sensor_translation_z_agent_3" value="1.5"/>
 
+        <arg name="height_agent_0" value="1.6"/>
+        <arg name="height_agent_1" value="1.6"/>
+        <arg name="height_agent_2" value="1.6"/>
+        <arg name="height_agent_3" value="1.6"/>
+
         <arg name="odom_topic_agent_0" value="/drone_0_visual_slam/odom"/>
         <arg name="odom_topic_agent_1" value="/drone_1_visual_slam/odom"/>
         <arg name="odom_topic_agent_2" value="/drone_2_visual_slam/odom"/>
         <arg name="odom_topic_agent_3" value="/drone_3_visual_slam/odom"/>
+        
+        <arg name="local_pcd_topic_agent_0" value="/drone_0_pcl_render_node/cloud"/>
+        <arg name="local_pcd_topic_agent_1" value="/drone_1_pcl_render_node/cloud"/>
+        <arg name="local_pcd_topic_agent_2" value="/drone_2_pcl_render_node/cloud"/>
+        <arg name="local_pcd_topic_agent_3" value="/drone_3_pcl_render_node/cloud"/>
 
     </include>
 
@@ -31,56 +41,52 @@
         <arg name="drone_id" value="0"/>
         <arg name="init_x" value="2"/>
         <arg name="init_y" value="4"/>
-        <arg name="init_z" value="0.3"/>
+        <arg name="init_z" value="0.0"/>
         <arg name="target0_x" value="-10"/>
         <arg name="target0_y" value="-0.5"/>
-        <arg name="target0_z" value="0.3"/>
+        <arg name="target0_z" value="0.0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
         <arg name="odom_topic" value="$(arg odom_topic)"/>
-        <arg name="flight_type" value="1"/>
     </include>
     <include file="$(find ego_planner)/launch/include/run_in_habitat.xml">
         <arg name="drone_id" value="1"/>
         <arg name="init_x" value="3.5"/>
         <arg name="init_y" value="-0.5"/>
-        <arg name="init_z" value="0.3"/>
-        <arg name="target0_x" value="-10.3"/>
+        <arg name="init_z" value="0.0"/>
+        <arg name="target0_x" value="-10"/>
         <arg name="target0_y" value="4.5"/>
-        <arg name="target0_z" value="0.3"/>
+        <arg name="target0_z" value="0.0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
         <arg name="odom_topic" value="$(arg odom_topic)"/>
-        <arg name="flight_type" value="1"/>
     </include>
     <include file="$(find ego_planner)/launch/include/run_in_habitat.xml">
         <arg name="drone_id" value="2"/>
         <arg name="init_x" value="-10"/>
         <arg name="init_y" value="-0.5"/>
-        <arg name="init_z" value="0.3"/>
+        <arg name="init_z" value="0.0"/>
         <arg name="target0_x" value="2"/>
         <arg name="target0_y" value="4"/>
-        <arg name="target0_z" value="0.3"/>
+        <arg name="target0_z" value="0.0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
         <arg name="odom_topic" value="$(arg odom_topic)"/>
-        <arg name="flight_type" value="1"/>
     </include>
     <include file="$(find ego_planner)/launch/include/run_in_habitat.xml">
         <arg name="drone_id" value="3"/>
-        <arg name="init_x" value="-10.3"/>
+        <arg name="init_x" value="-10"/>
         <arg name="init_y" value="4.5"/>
-        <arg name="init_z" value="0.3"/>
+        <arg name="init_z" value="0.0"/>
         <arg name="target0_x" value="3.5"/>
         <arg name="target0_y" value="-0.5"/>
-        <arg name="target0_z" value="0.3"/>
+        <arg name="target0_z" value="0.0"/>
         <arg name="map_size_x" value="$(arg map_size_x)"/>
         <arg name="map_size_y" value="$(arg map_size_y)"/>
         <arg name="map_size_z" value="$(arg map_size_z)"/>
         <arg name="odom_topic" value="$(arg odom_topic)"/>
-        <arg name="flight_type" value="1"/>
     </include>
 </launch>

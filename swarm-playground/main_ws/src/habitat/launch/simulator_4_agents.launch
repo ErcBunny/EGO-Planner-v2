@@ -276,6 +276,9 @@ Simulator and agent configs are listed below. -->
     <arg name="depth_image_raw_topic_agent_0"
         default="/agent_0_local_sensing/depth/image_raw"/>
 
+    <arg name="local_pcd_topic_agent_0"
+        default="/agent_0_local_sensing/pcd"/>
+
     <arg name="semantic_image_raw_topic_agent_0"
         default="/agent_0_local_sensing/semantic/image_raw"/>
 
@@ -386,6 +389,9 @@ Simulator and agent configs are listed below. -->
 
     <arg name="depth_image_raw_topic_agent_1"
         default="/agent_1_local_sensing/depth/image_raw"/>
+
+    <arg name="local_pcd_topic_agent_1"
+        default="/agent_1_local_sensing/pcd"/>
 
     <arg name="semantic_image_raw_topic_agent_1"
         default="/agent_1_local_sensing/semantic/image_raw"/>
@@ -498,6 +504,9 @@ Simulator and agent configs are listed below. -->
     <arg name="depth_image_raw_topic_agent_2"
         default="/agent_2_local_sensing/depth/image_raw"/>
 
+    <arg name="local_pcd_topic_agent_2"
+        default="/agent_2_local_sensing/pcd"/>
+
     <arg name="semantic_image_raw_topic_agent_2"
         default="/agent_2_local_sensing/semantic/image_raw"/>
 
@@ -608,6 +617,9 @@ Simulator and agent configs are listed below. -->
 
     <arg name="depth_image_raw_topic_agent_3"
         default="/agent_3_local_sensing/depth/image_raw"/>
+
+    <arg name="local_pcd_topic_agent_3"
+        default="/agent_3_local_sensing/pcd"/>
 
     <arg name="semantic_image_raw_topic_agent_3"
         default="/agent_3_local_sensing/semantic/image_raw"/>
@@ -768,6 +780,7 @@ Simulator and agent configs are listed below. -->
         <param name="odom_topic_agent_0"                        type="str"      value="$(arg odom_topic_agent_0)"/>
         <param name="color_image_raw_topic_agent_0"             type="str"      value="$(arg color_image_raw_topic_agent_0)"/>
         <param name="depth_image_raw_topic_agent_0"             type="str"      value="$(arg depth_image_raw_topic_agent_0)"/>
+        <param name="local_pcd_topic_agent_0"                   type="str"      value="$(arg local_pcd_topic_agent_0)"/>
         <param name="semantic_image_raw_topic_agent_0"          type="str"      value="$(arg semantic_image_raw_topic_agent_0)"/>
         <param name="depth_trunc_meters_agent_0"                type="double"   value="$(arg depth_trunc_meters_agent_0)"/>
 
@@ -800,6 +813,7 @@ Simulator and agent configs are listed below. -->
         <param name="odom_topic_agent_1"                        type="str"      value="$(arg odom_topic_agent_1)"/>
         <param name="color_image_raw_topic_agent_1"             type="str"      value="$(arg color_image_raw_topic_agent_1)"/>
         <param name="depth_image_raw_topic_agent_1"             type="str"      value="$(arg depth_image_raw_topic_agent_1)"/>
+        <param name="local_pcd_topic_agent_1"                   type="str"      value="$(arg local_pcd_topic_agent_1)"/>
         <param name="semantic_image_raw_topic_agent_1"          type="str"      value="$(arg semantic_image_raw_topic_agent_1)"/>
         <param name="depth_trunc_meters_agent_1"                type="double"   value="$(arg depth_trunc_meters_agent_1)"/>
 
@@ -832,6 +846,7 @@ Simulator and agent configs are listed below. -->
         <param name="odom_topic_agent_2"                        type="str"      value="$(arg odom_topic_agent_2)"/>
         <param name="color_image_raw_topic_agent_2"             type="str"      value="$(arg color_image_raw_topic_agent_2)"/>
         <param name="depth_image_raw_topic_agent_2"             type="str"      value="$(arg depth_image_raw_topic_agent_2)"/>
+        <param name="local_pcd_topic_agent_2"                   type="str"      value="$(arg local_pcd_topic_agent_2)"/>
         <param name="semantic_image_raw_topic_agent_2"          type="str"      value="$(arg semantic_image_raw_topic_agent_2)"/>
         <param name="depth_trunc_meters_agent_2"                type="double"   value="$(arg depth_trunc_meters_agent_2)"/>
 
@@ -864,6 +879,7 @@ Simulator and agent configs are listed below. -->
         <param name="odom_topic_agent_3"                        type="str"      value="$(arg odom_topic_agent_3)"/>
         <param name="color_image_raw_topic_agent_3"             type="str"      value="$(arg color_image_raw_topic_agent_3)"/>
         <param name="depth_image_raw_topic_agent_3"             type="str"      value="$(arg depth_image_raw_topic_agent_3)"/>
+        <param name="local_pcd_topic_agent_3"                   type="str"      value="$(arg local_pcd_topic_agent_3)"/>
         <param name="semantic_image_raw_topic_agent_3"          type="str"      value="$(arg semantic_image_raw_topic_agent_3)"/>
         <param name="depth_trunc_meters_agent_3"                type="double"   value="$(arg depth_trunc_meters_agent_3)"/>
 
