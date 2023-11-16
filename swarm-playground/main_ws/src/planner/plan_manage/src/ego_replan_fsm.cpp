@@ -67,9 +67,9 @@ namespace ego_planner
     {
       trigger_sub_ = nh.subscribe("/traj_start_trigger", 1, &EGOReplanFSM::triggerCallback, this);
 
-      ROS_INFO("Wait for 6 seconds as it takes time to generate global cloud.");
+      ROS_INFO("Wait for 9 seconds as it takes time to generate global cloud.");
       int count = 0;
-      while (ros::ok() && count++ < 6000)
+      while (ros::ok() && count++ < 9000)
       {
         ros::spinOnce();
         ros::Duration(0.001).sleep();
@@ -213,7 +213,7 @@ namespace ego_planner
       }
       else if (t_cur > replan_thresh_ || (!touch_the_goal && close_to_current_traj_end)) // case 3: time to perform next replan
       {
-        if ((final_goal_ - odom_pos_).norm() > 1.25 * odom_vel_.norm())
+        if ((final_goal_ - odom_pos_).norm() > 1)
           changeFSMExecState(REPLAN_TRAJ, "FSM");
       }
       // ROS_ERROR("AAAA");
@@ -547,8 +547,8 @@ namespace ego_planner
         }
         if (
               odom_vel_.norm() < 0.1 ||
-              (final_goal_ - odom_pos_).norm() < 1.25 * odom_vel_.norm() ||
-              odom_vel_.normalized().transpose() * (final_goal_ - odom_pos_).normalized() < 0.3
+              (final_goal_ - odom_pos_).norm() < 1 ||
+              odom_vel_.normalized().transpose() * (final_goal_ - odom_pos_).normalized() < 0.5
         )
           changeFSMExecState(EMERGENCY_STOP, "TRIG");
         else
