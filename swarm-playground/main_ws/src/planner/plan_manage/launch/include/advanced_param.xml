@@ -35,6 +35,10 @@
     <arg name="flight_type"/>
     <arg name="use_multitopology_trajs"/>
     <arg name="drone_id"/>
+    <arg name="fading_time" default="1000"/>
+    <arg name="local_update_range_x" default="5.5"/>
+    <arg name="local_update_range_y" default="5.5"/>
+    <arg name="cons_pts_per_piece" default="5"/>
     <!-- main node -->
     <!-- <node pkg="ego_planner" name="ego_planner_node" type="ego_planner_node" output="screen" launch-prefix="valgrind"> -->
     <node pkg="ego_planner" name="drone_$(arg drone_id)_ego_planner_node" type="ego_planner_node" output="screen">
@@ -78,8 +82,8 @@
         <param name="grid_map/map_size_x" value="$(arg map_size_x_)" />
         <param name="grid_map/map_size_y" value="$(arg map_size_y_)" />
         <param name="grid_map/map_size_z" value="$(arg map_size_z_)" />
-        <param name="grid_map/local_update_range_x" value="5.5" />
-        <param name="grid_map/local_update_range_y" value="5.5" />
+        <param name="grid_map/local_update_range_x" value="$(arg local_update_range_x)" />
+        <param name="grid_map/local_update_range_y" value="$(arg local_update_range_y)" />
         <param name="grid_map/local_update_range_z" value="2.0" /> <!-- different meaning between grid_map.cpp and grid_map_bigmap.cpp -->
         <param name="grid_map/obstacles_inflation" value="0.1" />
         <param name="grid_map/local_map_margin" value="10"/>
@@ -106,7 +110,7 @@
         <param name="grid_map/p_min" value="0.12"/>
         <param name="grid_map/p_max" value="0.90"/>
         <param name="grid_map/p_occ" value="0.80"/>
-        <param name="grid_map/fading_time" value="1000.0"/>
+        <param name="grid_map/fading_time" value="$(arg fading_time)"/>
         <param name="grid_map/min_ray_length" value="0.1"/>
         <param name="grid_map/max_ray_length" value="4.5"/>
         <param name="grid_map/visualization_truncate_height" value="2"/>
@@ -122,7 +126,7 @@
         <param name="manager/use_multitopology_trajs" value="$(arg use_multitopology_trajs)" type="bool"/>
         <param name="manager/drone_id" value="$(arg drone_id)"/>
         <!-- trajectory optimization -->
-        <param name="optimization/constraint_points_perPiece" value="5" type="int"/>
+        <param name="optimization/constraint_points_perPiece" value="$(arg cons_pts_per_piece)" type="int"/>
         <param name="optimization/weight_obstacle" value="10000.0" type="double"/>
         <param name="optimization/weight_obstacle_soft" value="5000.0" type="double"/>
         <param name="optimization/weight_swarm" value="10000.0" type="double"/>
