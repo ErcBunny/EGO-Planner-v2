@@ -36,6 +36,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include
   ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 

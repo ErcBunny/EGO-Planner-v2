@@ -146,6 +146,7 @@ catkin_package(
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 ## Declare a cpp library

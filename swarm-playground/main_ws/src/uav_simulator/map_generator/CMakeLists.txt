@@ -24,6 +24,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 add_executable (random_forest src/random_forest_sensing.cpp )

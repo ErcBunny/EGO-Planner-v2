@@ -21,6 +21,7 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 add_executable (poscmd_2_odom src/poscmd_2_odom.cpp )

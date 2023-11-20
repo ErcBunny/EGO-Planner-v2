@@ -59,6 +59,7 @@ set(SOURCE_FILES
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 add_library(${PROJECT_NAME} ${SOURCE_FILES})

@@ -3,7 +3,7 @@ project(selected_points_publisher)
 find_package(catkin REQUIRED COMPONENTS rviz)
 catkin_package()
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/../devel/include)
 link_directories(${catkin_LIBRARY_DIRS})
 
 find_package(Qt5 ${rviz_QT_VERSION} REQUIRED Core Widgets Quick)

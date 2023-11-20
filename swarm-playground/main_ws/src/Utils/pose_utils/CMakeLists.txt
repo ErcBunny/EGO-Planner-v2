@@ -24,6 +24,7 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     # ${ARMADILLO_INCLUDE_DIRS}
     include
+    ${CMAKE_SOURCE_DIR}/../devel/include
     )
 
 add_library(pose_utils 

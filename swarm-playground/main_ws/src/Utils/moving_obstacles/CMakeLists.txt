@@ -25,6 +25,7 @@ include_directories(
   SYSTEM
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 add_executable(moving_obstacles

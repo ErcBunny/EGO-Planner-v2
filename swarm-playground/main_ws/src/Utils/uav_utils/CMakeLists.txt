@@ -49,6 +49,7 @@ include_directories(
   include
   ${EIGEN_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 #############

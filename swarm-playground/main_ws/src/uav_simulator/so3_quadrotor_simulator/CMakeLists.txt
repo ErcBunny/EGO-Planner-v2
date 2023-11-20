@@ -36,6 +36,7 @@ catkin_package(
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 add_library(quadrotor_dynamics src/dynamics/Quadrotor.cpp)

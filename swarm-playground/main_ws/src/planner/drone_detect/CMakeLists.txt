@@ -64,7 +64,7 @@ include_directories(
   # Set because Boost is an internal dependency, not transitive.
   ${Boost_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 ## Declare cpp executables

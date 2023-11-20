@@ -43,6 +43,7 @@ include_directories(
     include 
     ${catkin_INCLUDE_DIRS}
     ${Eigen3_INCLUDE_DIRS} 
+    ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 # link_directories(${PCL_LIBRARY_DIRS})

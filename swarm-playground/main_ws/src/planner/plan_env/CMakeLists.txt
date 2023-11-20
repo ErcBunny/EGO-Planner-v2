@@ -35,6 +35,7 @@ include_directories(
     ${Eigen3_INCLUDE_DIRS} 
     ${PCL_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 link_directories(${PCL_LIBRARY_DIRS})

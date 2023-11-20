@@ -56,6 +56,7 @@ set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 include_directories(
     ${catkin_INCLUDE_DIRS}
     include
+    ${CMAKE_SOURCE_DIR}/../devel/include
     )
 
 

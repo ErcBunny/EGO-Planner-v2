@@ -157,6 +157,7 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/../devel/include
 )
 
 ## Declare a cpp library
